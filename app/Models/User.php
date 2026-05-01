@@ -59,6 +59,12 @@ class User extends Authenticatable
         return $this->hasMany(SocialAccount::class);
     }
 
+    /** @return HasMany<Post, $this> */
+    public function posts(): HasMany
+    {
+        return $this->hasMany(Post::class);
+    }
+
     public function isAdmin(): bool
     {
         return $this->role === Role::Admin;
