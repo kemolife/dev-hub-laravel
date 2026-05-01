@@ -6,9 +6,11 @@ namespace App\Providers;
 
 use App\Models\User;
 use Carbon\CarbonImmutable;
+use Illuminate\Database\Events\QueryExecuted;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
 
@@ -29,6 +31,7 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->configureDefaults();
         $this->configureGates();
+        $this->configureSlowQueryLogging();
     }
 
     /**
@@ -57,5 +60,28 @@ class AppServiceProvider extends ServiceProvider
                 ->uncompromised()
             : null,
         );
+    }
+
+    /**
+     * Log queries slower than 100ms to the daily channel in local/testing environments.
+     *
+     * This surfaces N+1 and missing-index problems during development before they reach production.
+     */
+    protected function configureSlowQueryLogging(): void
+    {
+        if (! $this->app->environment('local', 'testing')) {
+            return;
+        }
+
+        DB::listen(function (QueryExecuted $query): void {
+            if ($query->time >= 100) {
+                Log::channel('daily')->warning('Slow query detected', [
+                    'sql' => $query->sql,
+                    'bindings' => $query->bindings,
+                    'time_ms' => $query->time,
+                    'connection' => $query->connectionName,
+                ]);
+            }
+        });
     }
 }

@@ -24,6 +24,7 @@ This folder contains every architecturally significant decision made in DevHub. 
 | 0016 | [Plan limits: config vs DB](./0016-plan-limits-storage.md) | Proposed | TBD |
 | 0017 | [Feature flags via Pennant](./0017-feature-flags.md) | Proposed | TBD |
 | 0018 | [No third-party analytics](./0018-no-third-party-analytics.md) | Proposed | TBD |
+| 0019 | [Observability stack: Sentry + Telescope (no Horizon)](./0019-observability-stack.md) | Accepted | 2026-05-01 |
 
 ## Status Legend
 
