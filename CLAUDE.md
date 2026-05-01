@@ -13,6 +13,7 @@ This application is a Laravel application and its main Laravel ecosystems packag
 - laravel/fortify (FORTIFY) - v1
 - laravel/framework (LARAVEL) - v13
 - laravel/prompts (PROMPTS) - v0
+- laravel/sanctum (SANCTUM) - v4
 - laravel/boost (BOOST) - v2
 - laravel/mcp (MCP) - v0
 - laravel/pail (PAIL) - v1
@@ -40,12 +41,6 @@ This project has domain-specific skills available. You MUST activate the relevan
 
 - Stick to existing directory structure; don't create new base folders without approval.
 - Do not change the application's dependencies without approval.
-
-## Architecture
-
-- This Laravel app is a **pure API backend**. Frontend is a separate React application. Laravel serves no views — all routes return JSON via API Resources.
-- CORS must be configured for all API routes consumed by the React frontend.
-- All API routes are versioned under `/api/v1/`.
 
 ## Documentation Files
 
@@ -163,6 +158,7 @@ This project has domain-specific skills available. You MUST activate the relevan
 - To run all tests in a file: `php artisan test --compact tests/Feature/ExampleTest.php`.
 - To filter on a particular test name: `php artisan test --compact --filter=testName` (recommended after making a change to a related file).
 
+
 </laravel-boost-guidelines>
 
 ---
@@ -189,6 +185,7 @@ Enforced. Any violation must be refactored before merge.
 8. **Use enums for status/role/type** — never magic strings
 9. **No `DB::raw()` without an ADR** — forces deliberate choice
 10. **Polymorphic + nested data uses adjacency list + materialized path** (see ADR-0007)
+11. **Actions accept DTOs, never plain arrays** — every action takes a typed `readonly` DTO from `app/Data/{Domain}/`. Form Requests expose `toData()` that constructs the DTO from `$this->validated()`.
 
 ---
 
@@ -197,7 +194,7 @@ Enforced. Any violation must be refactored before merge.
 ```
 app/
 ├── Actions/{Domain}/         ← business logic, single-responsibility
-├── Data/                     ← DTOs (spatie/laravel-data)
+├── Data/{Domain}/            ← DTOs (PHP readonly classes — input to actions, output from actions)
 ├── Enums/                    ← PHP enums
 ├── Events/                   ← domain events (past tense: PostPublished)
 ├── Http/
@@ -227,6 +224,61 @@ When in doubt: new business logic → `app/Actions/{Domain}/`.
 - **Listeners**: describe what they do. `SendNewPostNotifications` ✓ — `PostPublishedListener` ✗
 - **Jobs**: imperative verb. `DeliverWebhookJob` ✓ — `WebhookJob` ✗
 - **Tests**: full sentence. `it('publishes a draft when title and body are present')`
+- **Input DTOs**: noun + `Data`. `LoginData`, `RegisterData` ✓ — `LoginInput` ✗
+- **Output DTOs**: describe what they carry. `AuthTokenData`, `TwoFactorRequiredData` ✓
+
+---
+
+## DTO Pattern
+
+All Actions receive and return typed `readonly` classes from `app/Data/{Domain}/`.
+
+**Input DTO** (Form Request → Action):
+```php
+// app/Data/Auth/LoginData.php
+readonly class LoginData
+{
+    public function __construct(
+        public string $email,
+        public string $password,
+        public string $deviceName = 'api',
+    ) {}
+
+    /** @param array{email: string, password: string, device_name?: string} $data */
+    public static function from(array $data): self
+    {
+        return new self(email: $data['email'], password: $data['password'], deviceName: $data['device_name'] ?? 'api');
+    }
+}
+
+// app/Http/Requests/Auth/LoginRequest.php
+public function toData(): LoginData
+{
+    return LoginData::from($this->validated());
+}
+
+// Controller
+$result = $this->loginAction->execute($request->toData());
+```
+
+**Output DTO** (Action → Controller):
+```php
+// app/Data/Auth/AuthTokenData.php
+readonly class AuthTokenData
+{
+    public function __construct(
+        public string $token,
+        public string $tokenType,
+        public User $user,
+    ) {}
+}
+```
+
+Rules:
+- Every `readonly` class in `app/Data/` gets `declare(strict_types=1)`
+- Input DTOs have a static `from(array $data): self` factory
+- Output DTOs are plain constructors — no factory needed
+- Never pass `$request->validated()` or `$request->all()` directly to an action
 
 ---
 
