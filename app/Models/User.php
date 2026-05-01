@@ -16,6 +16,7 @@ use Illuminate\Support\Str;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Sanctum\HasApiTokens;
 
+/** @property Role $role */
 #[Fillable([
     'name',
     'email',
@@ -37,7 +38,7 @@ class User extends Authenticatable
     {
         static::creating(function (User $user): void {
             $user->public_id ??= (string) Str::uuid();
-            $user->role ??= Role::Member->value;
+            $user->role ??= Role::Member;
         });
     }
 
@@ -52,6 +53,7 @@ class User extends Authenticatable
         ];
     }
 
+    /** @return HasMany<SocialAccount, $this> */
     public function socialAccounts(): HasMany
     {
         return $this->hasMany(SocialAccount::class);

@@ -1,0 +1,81 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  backend:
+    name: PHP ${{ matrix.php }}
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_DB: devhub_test
+          POSTGRES_USER: devhub
+          POSTGRES_PASSWORD: devhub
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    strategy:
+      matrix:
+        php: ["8.4"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: pdo, pdo_pgsql, redis, bcmath, intl
+          coverage: none
+
+      - name: Cache Composer packages
+        uses: actions/cache@v4
+        with:
+          path: vendor
+          key: ${{ runner.os }}-composer-${{ hashFiles('composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-interaction --no-progress
+
+      - name: Copy .env
+        run: cp .env.example .env
+
+      - name: Configure test environment
+        run: |
+          echo "APP_KEY=" >> .env
+          php artisan key:generate --force
+          echo "DB_CONNECTION=pgsql" >> .env
+          echo "DB_HOST=127.0.0.1" >> .env
+          echo "DB_PORT=5432" >> .env
+          echo "DB_DATABASE=devhub_test" >> .env
+          echo "DB_USERNAME=devhub" >> .env
+          echo "DB_PASSWORD=devhub" >> .env
+          echo "QUEUE_CONNECTION=sync" >> .env
+          echo "CACHE_STORE=array" >> .env
+          echo "SESSION_DRIVER=array" >> .env
+          echo "MAIL_MAILER=array" >> .env
+
+      - name: Run migrations
+        run: php artisan migrate --force
+
+      - name: Lint (Pint)
+        run: vendor/bin/pint --parallel --test
+
+      - name: Static analysis (Larastan)
+        run: vendor/bin/phpstan analyse --memory-limit=512M --no-progress
+
+      - name: Tests (PHPUnit)
+        run: php artisan test --compact
