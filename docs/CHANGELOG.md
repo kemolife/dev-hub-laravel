@@ -15,6 +15,7 @@ Each entry should answer: **what changed** and **why it matters to the user**. I
 - Tags: posts can have up to 5 normalized tags; slugs auto-generated and deduplicated
 - Public tag listing and lookup via `GET /api/v1/tags` and `GET /api/v1/tags/{slug}`
 - `reactions_count` and `tags` fields now included in all post API responses
+- Full-text search endpoint (`GET /api/v1/search`) powered by Meilisearch via Laravel Scout. Supports filtering by author; empty queries return recent published posts. Search queries are tracked (with result count and optional user attribution) for analytics.
 
 ### Changed
 - _

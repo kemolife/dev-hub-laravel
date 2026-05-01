@@ -281,6 +281,56 @@ php artisan horizon:continue
 
 ---
 
+## Search Index (Meilisearch)
+
+### Re-index all published posts
+
+Run when: Meilisearch was down for a period, after a schema change to `toSearchableArray()`, or after restoring from backup.
+
+```bash
+# Flush the existing index and re-import all published posts
+php artisan scout:flush "App\Models\Post"
+php artisan scout:import "App\Models\Post"
+```
+
+Both commands only touch documents where `shouldBeSearchable()` returns true (i.e., published posts only).
+
+### Sync index settings after config changes
+
+If you update `filterableAttributes`, `sortableAttributes`, or `searchableAttributes` in `config/scout.php`:
+
+```bash
+php artisan scout:sync-index-settings
+```
+
+### Check Meilisearch health
+
+```bash
+curl http://127.0.0.1:7700/health
+# Expected: {"status":"available"}
+```
+
+### Meilisearch won't start
+
+```bash
+# macOS (Homebrew)
+brew services restart meilisearch
+
+# Docker
+docker compose restart meilisearch
+```
+
+If the index is corrupted, remove the `data.ms/` directory and re-import:
+
+```bash
+rm -rf /usr/local/var/meilisearch/data.ms/
+brew services restart meilisearch
+php artisan scout:sync-index-settings
+php artisan scout:import "App\Models\Post"
+```
+
+---
+
 ## Contact / Escalation
 
 - **Solo project**: Vitalii is the only on-call

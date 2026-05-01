@@ -12,7 +12,7 @@ class PublishPostAction
 {
     public function execute(Post $post): Post
     {
-        $post->published_at = now()->toDateTimeString();
+        $post->published_at = now();
         $post->status = PostStatus::Published;
         $post->save();
 

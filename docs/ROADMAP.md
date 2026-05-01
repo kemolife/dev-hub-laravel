@@ -20,7 +20,7 @@ The minimum viable platform: a developer can sign up, write a post, and have som
 - 🚧 Posts: markdown editor, drafts, publishing, slugs
 - 📋 Comments: polymorphic, nested, edit window
 - ✅ Tags with normalization
-- 📋 Search via Meilisearch
+- ✅ Search via Meilisearch
 
 **Done means:** A new user can sign up, publish a post, get a comment on it, and find it via search. No more, no less.
 
