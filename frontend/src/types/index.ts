@@ -33,3 +33,20 @@ export interface User {
   email_verified_at: string | null;
   created_at: string;
 }
+
+export interface ApiComment {
+  id: number;
+  body: string;
+  body_html: string;
+  depth: number;
+  parent_id: number | null;
+  author: {
+    id: number;
+    name: string;
+    username: string;
+    avatar_path: string | null;
+  };
+  created_at: string;
+  updated_at: string;
+  children?: ApiComment[];
+}
