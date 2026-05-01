@@ -6,6 +6,9 @@ import { HomePage } from './pages/home-page';
 import { LoginPage } from './pages/login-page';
 import { PostDetailPage } from './pages/post-detail-page';
 import { RegisterPage } from './pages/register-page';
+import { SearchPage } from './pages/search-page';
+import { TagDetailPage } from './pages/tag-detail-page';
+import { TagsPage } from './pages/tags-page';
 import { TwoFactorPage } from './pages/two-factor-page';
 
 function RequireAuth({ children }: { children: React.ReactNode }) {
@@ -46,5 +49,17 @@ export const router = createBrowserRouter([
   {
     path: '/two-factor',
     element: <TwoFactorPage />,
+  },
+  {
+    path: '/search',
+    element: <SearchPage />,
+  },
+  {
+    path: '/tags',
+    element: <TagsPage />,
+  },
+  {
+    path: '/tags/:slug',
+    element: <TagDetailPage />,
   },
 ]);
