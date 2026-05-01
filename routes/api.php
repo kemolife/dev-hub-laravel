@@ -5,6 +5,8 @@ declare(strict_types=1);
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\BillingController;
 use App\Http\Controllers\Api\V1\CommentController;
+use App\Http\Controllers\Api\V1\NotificationController;
+use App\Http\Controllers\Api\V1\NotificationPreferenceController;
 use App\Http\Controllers\Api\V1\PostController;
 use App\Http\Controllers\Api\V1\PostManagementController;
 use App\Http\Controllers\Api\V1\TokenController;
@@ -43,6 +45,14 @@ Route::middleware(['auth:sanctum', UpdateLastSeenAt::class])->group(function ():
     Route::post('/posts/{post:slug}/comments', [CommentController::class, 'store']);
     Route::put('/posts/{post:slug}/comments/{comment}', [CommentController::class, 'update']);
     Route::delete('/posts/{post:slug}/comments/{comment}', [CommentController::class, 'destroy']);
+
+    // Notifications
+    Route::get('/notifications', [NotificationController::class, 'index']);
+    Route::post('/notifications/read-all', [NotificationController::class, 'markAllRead']);
+    Route::post('/notifications/{id}/read', [NotificationController::class, 'markRead']);
+    Route::delete('/notifications/{id}', [NotificationController::class, 'destroy']);
+    Route::get('/notification-preferences', [NotificationPreferenceController::class, 'index']);
+    Route::put('/notification-preferences', [NotificationPreferenceController::class, 'update']);
 
     // Billing
     Route::get('/billing', [BillingController::class, 'show'])->name('billing.show');

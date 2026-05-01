@@ -11,7 +11,15 @@ Each entry should answer: **what changed** and **why it matters to the user**. I
 ## [Unreleased]
 
 ### Added
-- _(features in progress, move to a versioned section on release)_
+- Multi-channel notifications: comment replies, mentions, and new-follower events delivered to in-app inbox and by email
+- Per-type, per-channel notification preferences — users can silence email for any notification type while keeping in-app alerts
+- Digest mode: opt into a weekly summary email instead of per-event emails (ADR-0020)
+- `GET /api/v1/notifications` — paginated list of a user's notifications
+- `POST /api/v1/notifications/{id}/read` — mark a single notification as read
+- `POST /api/v1/notifications/read-all` — mark all notifications as read
+- `DELETE /api/v1/notifications/{id}` — delete a notification
+- `GET /api/v1/notification-preferences` — list all preferences with defaults for unconfigured types
+- `PUT /api/v1/notification-preferences` — upsert preferences in bulk (ADR-0010)
 
 ### Changed
 - _
