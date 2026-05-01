@@ -105,3 +105,24 @@ export interface Invoice {
   status: string;
   download_url: string;
 }
+
+export interface ApiNotification {
+  id: string;
+  type: string;
+  data: {
+    message: string;
+    url?: string;
+    post_slug?: string;
+    commenter_name?: string;
+  };
+  read_at: string | null;
+  created_at: string;
+}
+
+export interface ApiPreference {
+  type: string;
+  type_label: string;
+  channel: string;
+  channel_label: string;
+  enabled: boolean;
+}
