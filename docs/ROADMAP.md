@@ -19,7 +19,7 @@ The minimum viable platform: a developer can sign up, write a post, and have som
 - ✅ Authentication with 2FA + GitHub/Google login
 - 🚧 Posts: markdown editor, drafts, publishing, slugs
 - 📋 Comments: polymorphic, nested, edit window
-- 📋 Tags with normalization
+- ✅ Tags with normalization
 - 📋 Search via Meilisearch
 
 **Done means:** A new user can sign up, publish a post, get a comment on it, and find it via search. No more, no less.
@@ -32,7 +32,7 @@ The minimum viable platform: a developer can sign up, write a post, and have som
 
 The features that make DevHub a community without becoming a feed.
 
-- 📋 Reactions (5 types, no leaderboard)
+- ✅ Reactions (5 types, no leaderboard)
 - 📋 Follow system + personal feed
 - 📋 Notifications with multi-channel preferences
 - 📋 Real-time updates via Reverb

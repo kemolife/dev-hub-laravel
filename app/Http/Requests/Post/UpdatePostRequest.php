@@ -27,6 +27,8 @@ class UpdatePostRequest extends FormRequest
             'excerpt' => ['sometimes', 'nullable', 'string', 'max:500'],
             'body_markdown' => ['sometimes', 'nullable', 'string'],
             'status' => ['sometimes', 'nullable', 'string', 'in:draft,published,archived'],
+            'tags' => ['sometimes', 'nullable', 'array', 'max:5'],
+            'tags.*' => ['string', 'max:50'],
         ];
     }
 

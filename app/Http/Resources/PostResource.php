@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Resources;
 
 use App\Models\Post;
+use App\Models\Tag;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -24,6 +25,12 @@ class PostResource extends JsonResource
             'status' => $this->resource->status,
             'published_at' => $this->resource->published_at,
             'view_count' => $this->resource->view_count,
+            'reactions_count' => $this->resource->reactions_count ?? 0,
+            'tags' => $this->resource->tags->map(fn (Tag $tag): array => [
+                'name' => $tag->name,
+                'slug' => $tag->slug,
+                'color' => $tag->color,
+            ]),
             'author' => new UserResource($this->resource->user),
             'created_at' => $this->resource->created_at,
             'updated_at' => $this->resource->updated_at,

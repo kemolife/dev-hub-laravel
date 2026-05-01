@@ -30,14 +30,14 @@ class PostManagementController extends Controller
     {
         $post = $this->createDraftAction->execute($request->user(), $request->toData());
 
-        return (new PostResource($post->load('user')))->response()->setStatusCode(201);
+        return (new PostResource($post->load('user', 'tags')))->response()->setStatusCode(201);
     }
 
     public function update(UpdatePostRequest $request, Post $post): JsonResponse
     {
-        $post = $this->updatePostAction->execute($post, $request->toData());
+        $post = $this->updatePostAction->execute($post, $request->toData(), $request->user());
 
-        return (new PostResource($post->load('user')))->response();
+        return (new PostResource($post->load('user', 'tags')))->response();
     }
 
     public function destroy(Request $request, Post $post): Response

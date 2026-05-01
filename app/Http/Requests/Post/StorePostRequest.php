@@ -22,6 +22,8 @@ class StorePostRequest extends FormRequest
             'title' => ['required', 'string', 'max:255'],
             'excerpt' => ['nullable', 'string', 'max:500'],
             'body_markdown' => ['nullable', 'string'],
+            'tags' => ['nullable', 'array', 'max:5'],
+            'tags.*' => ['string', 'max:50'],
         ];
     }
 

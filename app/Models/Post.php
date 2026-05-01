@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Casts\MarkdownCast;
+use App\Concerns\HasReactions;
 use App\Enums\PostStatus;
 use App\Support\ReadingTime;
 use Database\Factories\PostFactory;
@@ -37,7 +38,7 @@ use Illuminate\Support\Str;
 class Post extends Model
 {
     /** @use HasFactory<PostFactory> */
-    use HasFactory, SoftDeletes;
+    use HasFactory, HasReactions, SoftDeletes;
 
     public function getRouteKeyName(): string
     {
@@ -102,15 +103,11 @@ class Post extends Model
         return $this->morphMany(Comment::class, 'commentable');
     }
 
-    /** @return MorphMany<Reaction, $this> */
-    public function reactions(): MorphMany
-    {
-        return $this->morphMany(Reaction::class, 'reactable');
-    }
-
     /** @return BelongsToMany<Tag, $this> */
     public function tags(): BelongsToMany
     {
-        return $this->belongsToMany(Tag::class);
+        return $this->belongsToMany(Tag::class)
+            ->withPivot('weight', 'added_by_user_id')
+            ->withTimestamps();
     }
 }

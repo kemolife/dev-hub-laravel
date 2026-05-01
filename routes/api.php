@@ -7,6 +7,8 @@ use App\Http\Controllers\Api\V1\BillingController;
 use App\Http\Controllers\Api\V1\CommentController;
 use App\Http\Controllers\Api\V1\PostController;
 use App\Http\Controllers\Api\V1\PostManagementController;
+use App\Http\Controllers\Api\V1\ReactionController;
+use App\Http\Controllers\Api\V1\TagController;
 use App\Http\Controllers\Api\V1\TokenController;
 use App\Http\Controllers\Api\V1\TwoFactorController;
 use App\Http\Controllers\Api\V1\UserController;
@@ -26,6 +28,9 @@ Route::get('/posts/{post:slug}/comments', [CommentController::class, 'index']);
 Route::post('/stripe/webhook', [WebhookController::class, 'handleWebhook'])
     ->name('cashier.webhook');
 
+Route::get('/tags', [TagController::class, 'index']);
+Route::get('/tags/{tag:slug}', [TagController::class, 'show']);
+
 Route::middleware(['auth:sanctum', UpdateLastSeenAt::class])->group(function (): void {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/me', [UserController::class, 'me']);
@@ -44,7 +49,8 @@ Route::middleware(['auth:sanctum', UpdateLastSeenAt::class])->group(function ():
     Route::put('/posts/{post:slug}/comments/{comment}', [CommentController::class, 'update']);
     Route::delete('/posts/{post:slug}/comments/{comment}', [CommentController::class, 'destroy']);
 
-    // Billing
+    Route::post('/posts/{post:slug}/reactions', [ReactionController::class, 'toggle']);
+
     Route::get('/billing', [BillingController::class, 'show'])->name('billing.show');
     Route::post('/billing/checkout', [BillingController::class, 'checkout'])->name('billing.checkout');
     Route::post('/billing/cancel', [BillingController::class, 'cancel'])->name('billing.cancel');

@@ -11,7 +11,10 @@ Each entry should answer: **what changed** and **why it matters to the user**. I
 ## [Unreleased]
 
 ### Added
-- _(features in progress, move to a versioned section on release)_
+- Reactions: authenticated users can toggle 5 reaction types (Like, Insightful, Fire, Heart, Mind Blown) on posts via `POST /api/v1/posts/{slug}/reactions`
+- Tags: posts can have up to 5 normalized tags; slugs auto-generated and deduplicated
+- Public tag listing and lookup via `GET /api/v1/tags` and `GET /api/v1/tags/{slug}`
+- `reactions_count` and `tags` fields now included in all post API responses
 
 ### Changed
 - _
