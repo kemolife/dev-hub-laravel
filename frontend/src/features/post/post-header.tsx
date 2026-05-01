@@ -1,18 +1,29 @@
 import { Avatar } from '../../components/ui/avatar';
 import { Tag } from '../../components/ui/tag';
 import { relativeTime } from '../../lib/utils';
-import type { Post } from '../../types';
+import type { ApiPost } from '../../types';
 
 interface PostHeaderProps {
-  post: Post;
+  post: ApiPost;
+}
+
+function authorInitials(name: string): string {
+  return name
+    .split(' ')
+    .map((n) => n[0])
+    .join('')
+    .slice(0, 2)
+    .toUpperCase();
 }
 
 export function PostHeader({ post }: PostHeaderProps) {
+  const publishedDate = post.published_at ?? post.created_at;
+
   return (
     <div>
       <div className="flex gap-1.5 flex-wrap mb-4">
         {post.tags.map((tag) => (
-          <Tag key={tag}>{tag}</Tag>
+          <Tag key={tag.id}>{tag.name}</Tag>
         ))}
       </div>
 
@@ -23,21 +34,27 @@ export function PostHeader({ post }: PostHeaderProps) {
         {post.title}
       </h1>
 
+      {post.subtitle && (
+        <p
+          className="leading-snug"
+          style={{ fontSize: 18, color: 'var(--color-text-secondary)', margin: '0 0 16px' }}
+        >
+          {post.subtitle}
+        </p>
+      )}
+
       <div
         className="flex items-center gap-3 pb-6"
         style={{ borderBottom: '0.5px solid var(--color-border-tertiary)', marginBottom: 32 }}
       >
         <Avatar
-          initials={post.author.initials}
-          bg={post.author.avatarBg}
-          color={post.author.avatarColor}
+          initials={authorInitials(post.author.name)}
           size="lg"
         />
         <div>
           <p className="m-0 text-sm font-medium">{post.author.name}</p>
           <p className="m-0 text-[13px]" style={{ color: 'var(--color-text-secondary)' }}>
-            Published {relativeTime(post.publishedAt)} · {post.readingMinutes} min read ·{' '}
-            {post.wordCount.toLocaleString()} words
+            Published {relativeTime(publishedDate)} · {post.reading_time_minutes} min read
           </p>
         </div>
       </div>

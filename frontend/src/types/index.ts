@@ -1,25 +1,9 @@
-export interface Author {
-  id: string;
+export interface ApiTag {
+  id: number;
   name: string;
-  initials: string;
-  avatarBg: string;
-  avatarColor: string;
+  slug: string;
+  posts_count?: number;
 }
-
-export interface Post {
-  id: string;
-  title: string;
-  subtitle?: string;
-  excerpt: string;
-  content: string;
-  author: Author;
-  publishedAt: string;
-  readingMinutes: number;
-  wordCount: number;
-  tags: string[];
-}
-
-export type Tag = string;
 
 export interface ApiAuthor {
   id: number;
@@ -28,24 +12,32 @@ export interface ApiAuthor {
   avatar_path: string | null;
 }
 
-export interface ApiTag {
-  id: number;
-  name: string;
-  slug: string;
-  posts_count?: number;
-}
-
 export interface ApiPost {
   id: number;
+  public_id: string;
   slug: string;
   title: string;
   subtitle: string | null;
+  body: string;
+  body_html: string;
   excerpt: string;
+  status: 'draft' | 'published' | 'archived';
   reading_time_minutes: number;
+  reactions_count: Record<string, number>;
   tags: ApiTag[];
   author: ApiAuthor;
   published_at: string | null;
-  reactions_count: Record<string, number>;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Pagination<T> {
+  data: T[];
+  meta: {
+    current_page: number;
+    last_page: number;
+    total: number;
+  };
 }
 
 export interface ApiTagDetail extends ApiTag {
@@ -127,18 +119,9 @@ export interface ApiPreference {
   enabled: boolean;
 }
 
-export interface ApiPostAuthor {
-  id: number;
-  name: string;
-  username: string;
-  avatar_path: string | null;
-}
+export type ApiPostAuthor = ApiAuthor;
 
-export interface ApiPostTag {
-  id: number;
-  name: string;
-  slug: string;
-}
+export type ApiPostTag = Omit<ApiTag, 'posts_count'>;
 
 export interface ApiUser {
   id: number;
