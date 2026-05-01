@@ -85,6 +85,12 @@ class User extends Authenticatable
         return $this->hasMany(NotificationPreference::class);
     }
 
+    /** @return HasMany<WebhookEndpoint, $this> */
+    public function webhookEndpoints(): HasMany
+    {
+        return $this->hasMany(WebhookEndpoint::class);
+    }
+
     public function isAdmin(): bool
     {
         return $this->role === Role::Admin;

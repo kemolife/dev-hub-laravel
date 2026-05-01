@@ -31,6 +31,8 @@ This folder contains every architecturally significant decision made in DevHub. 
 | 0023 | [Onboarding step storage: JSON column vs dedicated table](./0023-onboarding-storage-json-vs-table.md) | Accepted | 2026-05-01 |
 | 0024 | [Feature flag rollout strategy via Laravel Pennant](./0024-feature-flag-rollout-pennant.md) | Accepted | 2026-05-01 |
 | 0025 | [Broadcast payload strategy: minimal payload, frontend re-fetches](./0025-broadcast-payload-strategy.md) | Accepted | 2026-05-01 |
+| 0026 | [API versioning strategy: URL-based](./0026-api-versioning-strategy.md) | Accepted | 2026-05-01 |
+| 0027 | [Webhook signing format: HMAC-SHA256](./0027-webhook-signing-format.md) | Accepted | 2026-05-01 |
 
 ## Status Legend
 

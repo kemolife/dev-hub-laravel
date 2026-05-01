@@ -6,6 +6,7 @@ namespace App\Providers;
 
 use App\Events\CommentPosted;
 use App\Events\PostPublished;
+use App\Listeners\DispatchWebhooksForEvent;
 use App\Listeners\SendNewCommentNotifications;
 use App\Listeners\TrackOnboardingProgress;
 use App\Models\Comment;
@@ -15,12 +16,15 @@ use App\Observers\PostObserver;
 use App\Policies\CommentPolicy;
 use App\Policies\PostPolicy;
 use Carbon\CarbonImmutable;
+use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Events\QueryExecuted;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
 use Laravel\Pennant\Feature;
@@ -45,6 +49,7 @@ class AppServiceProvider extends ServiceProvider
         $this->configureObservers();
         $this->configureListeners();
         $this->configureFeatureFlags();
+        $this->configureRateLimiters();
         $this->configureSlowQueryLogging();
     }
 
@@ -88,6 +93,7 @@ class AppServiceProvider extends ServiceProvider
         Event::listen(CommentPosted::class, SendNewCommentNotifications::class);
         Event::listen(PostPublished::class, [TrackOnboardingProgress::class, 'handlePostPublished']);
         Event::listen(CommentPosted::class, [TrackOnboardingProgress::class, 'handleCommentPosted']);
+        Event::listen([PostPublished::class, CommentPosted::class], DispatchWebhooksForEvent::class);
     }
 
     protected function configureFeatureFlags(): void
@@ -96,6 +102,29 @@ class AppServiceProvider extends ServiceProvider
         Feature::define('ai-summaries', fn (User $user): bool => false);
         Feature::define('recommendations', fn (User $user): bool => true);
         Feature::define('public-roadmap', fn (User $user): bool => true);
+    }
+
+    protected function configureRateLimiters(): void
+    {
+        RateLimiter::for('api-anonymous', function (Request $request): Limit {
+            return Limit::perHour(60)->by($request->ip());
+        });
+
+        RateLimiter::for('api-authenticated', function (Request $request): Limit {
+            if ($request->user()) {
+                return Limit::perHour(1000)->by((string) $request->user()->id);
+            }
+
+            return Limit::perHour(60)->by($request->ip());
+        });
+
+        RateLimiter::for('login', function (Request $request): Limit {
+            return Limit::perMinute(5)->by($request->input('email').'|'.$request->ip());
+        });
+
+        RateLimiter::for('password-reset', function (Request $request): Limit {
+            return Limit::perHour(3)->by((string) $request->input('email'));
+        });
     }
 
     /**
