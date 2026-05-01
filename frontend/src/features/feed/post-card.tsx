@@ -2,13 +2,24 @@ import { Link } from 'react-router';
 import { Avatar } from '../../components/ui/avatar';
 import { Tag } from '../../components/ui/tag';
 import { relativeTime } from '../../lib/utils';
-import type { Post } from '../../types';
+import type { ApiPost } from '../../types';
 
 interface PostCardProps {
-  post: Post;
+  post: ApiPost;
+}
+
+function authorInitials(name: string): string {
+  return name
+    .split(' ')
+    .map((n) => n[0])
+    .join('')
+    .slice(0, 2)
+    .toUpperCase();
 }
 
 export function PostCard({ post }: PostCardProps) {
+  const publishedDate = post.published_at ?? post.created_at;
+
   return (
     <article
       className="rounded-[var(--radius-lg)] p-4 md:p-5"
@@ -22,22 +33,20 @@ export function PostCard({ post }: PostCardProps) {
         style={{ color: 'var(--color-text-secondary)' }}
       >
         <Avatar
-          initials={post.author.initials}
-          bg={post.author.avatarBg}
-          color={post.author.avatarColor}
+          initials={authorInitials(post.author.name)}
           size="sm"
         />
         <span style={{ color: 'var(--color-text-primary)', fontWeight: 500 }}>
           {post.author.name}
         </span>
         <span>·</span>
-        <span>{relativeTime(post.publishedAt)}</span>
+        <span>{relativeTime(publishedDate)}</span>
         <span>·</span>
-        <span>{post.readingMinutes} min read</span>
+        <span>{post.reading_time_minutes} min read</span>
       </div>
 
       <Link
-        to={`/posts/${post.id}`}
+        to={`/posts/${post.slug}`}
         className="block no-underline"
         style={{ color: 'inherit' }}
       >
@@ -58,7 +67,7 @@ export function PostCard({ post }: PostCardProps) {
 
       <div className="flex gap-1.5 flex-wrap">
         {post.tags.map((tag) => (
-          <Tag key={tag}>{tag}</Tag>
+          <Tag key={tag.id}>{tag.name}</Tag>
         ))}
       </div>
     </article>

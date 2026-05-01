@@ -1,5 +1,7 @@
+import type { ApiTag } from '../../types';
+
 interface TrendingSidebarProps {
-  tags: string[];
+  tags: ApiTag[];
 }
 
 export function TrendingSidebar({ tags }: TrendingSidebarProps) {
@@ -19,8 +21,8 @@ export function TrendingSidebar({ tags }: TrendingSidebarProps) {
       </p>
       <div className="flex flex-col gap-1.5">
         {tags.map((tag) => (
-          <span key={tag} className="text-[13px]">
-            {tag}
+          <span key={tag.id} className="text-[13px]">
+            {tag.name}
           </span>
         ))}
       </div>
