@@ -73,6 +73,16 @@ export function HomePage() {
             />
             {user ? (
               <div className="flex items-center gap-2">
+                <Link
+                  to="/settings/billing"
+                  style={{
+                    fontSize: 13,
+                    color: 'var(--color-text-secondary)',
+                    textDecoration: 'none',
+                  }}
+                >
+                  Billing
+                </Link>
                 <Avatar
                   initials={user.name
                     .split(' ')
