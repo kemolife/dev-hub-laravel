@@ -3,6 +3,7 @@ import { Avatar } from '../components/ui/avatar';
 import { Button } from '../components/ui/button';
 import { Topbar } from '../components/layout/topbar';
 import { useAuth } from '../features/auth/auth-context';
+import { NotificationBell } from '../features/notifications/notification-bell';
 import { NewsletterWidget } from '../features/feed/newsletter-widget';
 import { PostCard } from '../features/feed/post-card';
 import { TrendingSidebar } from '../features/feed/trending-sidebar';
@@ -73,6 +74,7 @@ export function HomePage() {
             />
             {user ? (
               <div className="flex items-center gap-2">
+                <NotificationBell />
                 <Avatar
                   initials={user.name
                     .split(' ')

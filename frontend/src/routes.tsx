@@ -4,6 +4,8 @@ import { useAuth } from './features/auth/auth-context';
 import { EditorPage } from './pages/editor-page';
 import { HomePage } from './pages/home-page';
 import { LoginPage } from './pages/login-page';
+import { NotificationPreferencesPage } from './pages/notification-preferences-page';
+import { NotificationsPage } from './pages/notifications-page';
 import { PostDetailPage } from './pages/post-detail-page';
 import { RegisterPage } from './pages/register-page';
 import { TwoFactorPage } from './pages/two-factor-page';
@@ -32,6 +34,22 @@ export const router = createBrowserRouter([
     element: (
       <RequireAuth>
         <EditorPage />
+      </RequireAuth>
+    ),
+  },
+  {
+    path: '/notifications',
+    element: (
+      <RequireAuth>
+        <NotificationsPage />
+      </RequireAuth>
+    ),
+  },
+  {
+    path: '/settings/notifications',
+    element: (
+      <RequireAuth>
+        <NotificationPreferencesPage />
       </RequireAuth>
     ),
   },
