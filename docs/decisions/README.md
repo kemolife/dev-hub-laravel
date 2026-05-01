@@ -20,8 +20,8 @@ This folder contains every architecturally significant decision made in DevHub. 
 | 0012 | [API versioning strategy](./0012-api-versioning.md) | Proposed | TBD |
 | 0013 | [Audit logging approach](./0013-audit-logging.md) | Proposed | TBD |
 | 0014 | [Bookmarks design](./0014-bookmarks.md) | Proposed | TBD |
-| 0015 | [Billing: Mollie over Stripe](./0015-billing-mollie.md) | Proposed | TBD |
-| 0016 | [Plan limits: config vs DB](./0016-plan-limits-storage.md) | Proposed | TBD |
+| 0015 | [Billing: Stripe over Mollie](./0015-billing-stripe-over-mollie.md) | Accepted | 2026-05-01 |
+| 0016 | [Plan limits: config vs DB](./0016-plan-limits-config-vs-db.md) | Accepted | 2026-05-01 |
 | 0017 | [Feature flags via Pennant](./0017-feature-flags.md) | Proposed | TBD |
 | 0018 | [No third-party analytics](./0018-no-third-party-analytics.md) | Proposed | TBD |
 | 0019 | [Observability stack: Sentry + Telescope (no Horizon)](./0019-observability-stack.md) | Accepted | 2026-05-01 |

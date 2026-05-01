@@ -12,11 +12,17 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
+use Laravel\Cashier\Billable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Sanctum\HasApiTokens;
 
-/** @property Role $role */
+/**
+ * @property Role $role
+ * @property string|null $plan
+ * @property Carbon|null $trial_ends_at
+ */
 #[Fillable([
     'name',
     'email',
@@ -27,18 +33,21 @@ use Laravel\Sanctum\HasApiTokens;
     'website_url',
     'timezone',
     'role',
+    'plan',
+    'trial_ends_at',
 ])]
 #[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token'])]
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
-    use HasApiTokens, HasFactory, Notifiable, TwoFactorAuthenticatable;
+    use Billable, HasApiTokens, HasFactory, Notifiable, TwoFactorAuthenticatable;
 
     protected static function booted(): void
     {
         static::creating(function (User $user): void {
             $user->public_id ??= (string) Str::uuid();
             $user->role ??= Role::Member;
+            $user->plan ??= 'free';
         });
     }
 
@@ -48,6 +57,7 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'last_seen_at' => 'datetime',
             'password' => 'hashed',
+            'trial_ends_at' => 'datetime',
             'two_factor_confirmed_at' => 'datetime',
             'role' => Role::class,
         ];
@@ -67,5 +77,15 @@ class User extends Authenticatable
     public function isModerator(): bool
     {
         return $this->role === Role::Moderator || $this->isAdmin();
+    }
+
+    public function isOnProPlan(): bool
+    {
+        return $this->plan === 'pro' || $this->plan === 'pro_annual';
+    }
+
+    public function isOnFreePlan(): bool
+    {
+        return $this->plan === 'free' || $this->plan === null;
     }
 }
