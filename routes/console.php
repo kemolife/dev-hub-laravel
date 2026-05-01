@@ -31,3 +31,6 @@ Schedule::call(function (): void {
             HandleTrialExpiredJob::dispatch($user);
         });
 })->daily()->name('trial-expired-downgrade');
+
+// Send re-engagement emails to inactive users
+Schedule::command('users:send-reengagement')->daily();

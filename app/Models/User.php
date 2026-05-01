@@ -9,6 +9,7 @@ use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -22,6 +23,11 @@ use Laravel\Sanctum\HasApiTokens;
  * @property Role $role
  * @property string|null $plan
  * @property Carbon|null $trial_ends_at
+ * @property Carbon|null $last_seen_at
+ * @property int $followers_count
+ * @property int $following_count
+ * @property string|null $referral_code
+ * @property int|null $referred_by_user_id
  */
 #[Fillable([
     'name',
@@ -35,6 +41,10 @@ use Laravel\Sanctum\HasApiTokens;
     'role',
     'plan',
     'trial_ends_at',
+    'followers_count',
+    'following_count',
+    'referral_code',
+    'referred_by_user_id',
 ])]
 #[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token'])]
 class User extends Authenticatable
@@ -48,6 +58,7 @@ class User extends Authenticatable
             $user->public_id ??= (string) Str::uuid();
             $user->role ??= Role::Member;
             $user->plan ??= 'free';
+            $user->referral_code ??= Str::random(8);
         });
     }
 
@@ -60,6 +71,8 @@ class User extends Authenticatable
             'trial_ends_at' => 'datetime',
             'two_factor_confirmed_at' => 'datetime',
             'role' => Role::class,
+            'followers_count' => 'integer',
+            'following_count' => 'integer',
         ];
     }
 
@@ -73,6 +86,25 @@ class User extends Authenticatable
     public function posts(): HasMany
     {
         return $this->hasMany(Post::class);
+    }
+
+    /** @return BelongsToMany<User, $this> */
+    public function following(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'follows', 'follower_id', 'followee_id')
+            ->withTimestamps('created_at', false);
+    }
+
+    /** @return BelongsToMany<User, $this> */
+    public function followers(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'follows', 'followee_id', 'follower_id')
+            ->withTimestamps('created_at', false);
+    }
+
+    public function isFollowing(User $user): bool
+    {
+        return $this->following()->where('followee_id', $user->id)->exists();
     }
 
     public function isAdmin(): bool
