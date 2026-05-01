@@ -3,14 +3,16 @@
 namespace App\Concerns;
 
 use App\Models\User;
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Unique;
 
 trait ProfileValidationRules
 {
     /**
      * Get the validation rules used to validate user profiles.
      *
-     * @return array<string, array<int, \Illuminate\Contracts\Validation\Rule|array<mixed>|string>>
+     * @return array<string, array<int, \Illuminate\Contracts\Validation\Rule|ValidationRule|Unique|array<mixed>|string>>
      */
     protected function profileRules(?int $userId = null): array
     {
@@ -23,7 +25,7 @@ trait ProfileValidationRules
     /**
      * Get the validation rules used to validate user names.
      *
-     * @return array<int, \Illuminate\Contracts\Validation\Rule|array<mixed>|string>
+     * @return array<int, \Illuminate\Contracts\Validation\Rule|ValidationRule|Unique|array<mixed>|string>
      */
     protected function nameRules(): array
     {
@@ -33,7 +35,7 @@ trait ProfileValidationRules
     /**
      * Get the validation rules used to validate user emails.
      *
-     * @return array<int, \Illuminate\Contracts\Validation\Rule|array<mixed>|string>
+     * @return array<int, \Illuminate\Contracts\Validation\Rule|ValidationRule|Unique|array<mixed>|string>
      */
     protected function emailRules(?int $userId = null): array
     {
