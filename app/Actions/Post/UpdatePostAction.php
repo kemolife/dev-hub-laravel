@@ -4,15 +4,19 @@ declare(strict_types=1);
 
 namespace App\Actions\Post;
 
+use App\Actions\Tag\SyncPostTagsAction;
 use App\Data\Post\UpdatePostData;
 use App\Enums\PostStatus;
 use App\Models\Post;
+use App\Models\User;
 use Illuminate\Validation\ValidationException;
 
 class UpdatePostAction
 {
+    public function __construct(private readonly SyncPostTagsAction $syncPostTagsAction) {}
+
     /** @throws ValidationException */
-    public function execute(Post $post, UpdatePostData $data): Post
+    public function execute(Post $post, UpdatePostData $data, User $updatedBy): Post
     {
         if ($data->status === PostStatus::Published) {
             $titleToCheck = $data->title ?? $post->title;
@@ -42,6 +46,10 @@ class UpdatePostAction
         }
 
         $post->save();
+
+        if ($data->tags !== null) {
+            $this->syncPostTagsAction->execute($post, $data->tags, $updatedBy);
+        }
 
         return $post;
     }

@@ -17,7 +17,7 @@ class PostController extends Controller
     public function index(Request $request): AnonymousResourceCollection
     {
         $posts = Post::published()
-            ->with('user')
+            ->with('user', 'tags')
             ->latest()
             ->paginate();
 
@@ -28,7 +28,7 @@ class PostController extends Controller
     {
         $this->authorize('view', $post);
 
-        $post->loadMissing('user');
+        $post->loadMissing('user', 'tags');
 
         $viewerKey = $request->user()?->id
             ? (string) $request->user()->id

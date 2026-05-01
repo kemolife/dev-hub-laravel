@@ -5,6 +5,8 @@ declare(strict_types=1);
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\PostController;
 use App\Http\Controllers\Api\V1\PostManagementController;
+use App\Http\Controllers\Api\V1\ReactionController;
+use App\Http\Controllers\Api\V1\TagController;
 use App\Http\Controllers\Api\V1\TokenController;
 use App\Http\Controllers\Api\V1\TwoFactorController;
 use App\Http\Controllers\Api\V1\UserController;
@@ -17,6 +19,9 @@ Route::post('/two-factor-challenge', [TwoFactorController::class, 'challenge'])-
 
 Route::get('/posts', [PostController::class, 'index']);
 Route::get('/posts/{post:slug}', [PostController::class, 'show']);
+
+Route::get('/tags', [TagController::class, 'index']);
+Route::get('/tags/{tag:slug}', [TagController::class, 'show']);
 
 Route::middleware(['auth:sanctum', UpdateLastSeenAt::class])->group(function (): void {
     Route::post('/logout', [AuthController::class, 'logout']);
@@ -31,4 +36,6 @@ Route::middleware(['auth:sanctum', UpdateLastSeenAt::class])->group(function ():
     Route::delete('/posts/{post:slug}', [PostManagementController::class, 'destroy']);
     Route::post('/posts/{post:slug}/publish', [PostManagementController::class, 'publish']);
     Route::post('/posts/{post:slug}/archive', [PostManagementController::class, 'archive']);
+
+    Route::post('/posts/{post:slug}/reactions', [ReactionController::class, 'toggle']);
 });

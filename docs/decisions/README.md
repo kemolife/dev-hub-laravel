@@ -25,6 +25,8 @@ This folder contains every architecturally significant decision made in DevHub. 
 | 0017 | [Feature flags via Pennant](./0017-feature-flags.md) | Proposed | TBD |
 | 0018 | [No third-party analytics](./0018-no-third-party-analytics.md) | Proposed | TBD |
 | 0019 | [Observability stack: Sentry + Telescope (no Horizon)](./0019-observability-stack.md) | Accepted | 2026-05-01 |
+| 0020 | [Denormalized counters for reactions and post counts](./0020-denormalized-counters.md) | Accepted | 2026-05-01 |
+| 0021 | [Tag normalization strategy](./0021-tag-normalization.md) | Accepted | 2026-05-01 |
 
 ## Status Legend
 
