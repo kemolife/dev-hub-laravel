@@ -15,8 +15,10 @@
         "laravel/framework": "^13.0",
         "laravel/pennant": "^1.23",
         "laravel/sanctum": "^4.3",
+        "laravel/scout": "^11.1",
         "laravel/tinker": "^3.0",
         "laravel/wayfinder": "^0.1.14",
+        "meilisearch/meilisearch-php": "^1.16",
         "sentry/sentry-laravel": "^4.25"
     },
     "require-dev": {
