@@ -8,10 +8,12 @@ use App\Http\Controllers\Api\V1\CommentController;
 use App\Http\Controllers\Api\V1\PostController;
 use App\Http\Controllers\Api\V1\PostManagementController;
 use App\Http\Controllers\Api\V1\ReactionController;
+use App\Http\Controllers\Api\V1\ReportController;
 use App\Http\Controllers\Api\V1\TagController;
 use App\Http\Controllers\Api\V1\TokenController;
 use App\Http\Controllers\Api\V1\TwoFactorController;
 use App\Http\Controllers\Api\V1\UserController;
+use App\Http\Middleware\CheckNotSuspended;
 use App\Http\Middleware\UpdateLastSeenAt;
 use Illuminate\Support\Facades\Route;
 use Laravel\Cashier\Http\Controllers\WebhookController;
@@ -39,17 +41,21 @@ Route::middleware(['auth:sanctum', UpdateLastSeenAt::class])->group(function ():
     Route::post('/tokens', [TokenController::class, 'store']);
     Route::delete('/tokens/{tokenId}', [TokenController::class, 'destroy']);
 
-    Route::post('/posts', [PostManagementController::class, 'store']);
-    Route::put('/posts/{post:slug}', [PostManagementController::class, 'update']);
-    Route::delete('/posts/{post:slug}', [PostManagementController::class, 'destroy']);
-    Route::post('/posts/{post:slug}/publish', [PostManagementController::class, 'publish']);
-    Route::post('/posts/{post:slug}/archive', [PostManagementController::class, 'archive']);
+    Route::middleware([CheckNotSuspended::class])->group(function (): void {
+        Route::post('/posts', [PostManagementController::class, 'store']);
+        Route::put('/posts/{post:slug}', [PostManagementController::class, 'update']);
+        Route::delete('/posts/{post:slug}', [PostManagementController::class, 'destroy']);
+        Route::post('/posts/{post:slug}/publish', [PostManagementController::class, 'publish']);
+        Route::post('/posts/{post:slug}/archive', [PostManagementController::class, 'archive']);
 
-    Route::post('/posts/{post:slug}/comments', [CommentController::class, 'store']);
-    Route::put('/posts/{post:slug}/comments/{comment}', [CommentController::class, 'update']);
-    Route::delete('/posts/{post:slug}/comments/{comment}', [CommentController::class, 'destroy']);
+        Route::post('/posts/{post:slug}/comments', [CommentController::class, 'store']);
+        Route::put('/posts/{post:slug}/comments/{comment}', [CommentController::class, 'update']);
+        Route::delete('/posts/{post:slug}/comments/{comment}', [CommentController::class, 'destroy']);
 
-    Route::post('/posts/{post:slug}/reactions', [ReactionController::class, 'toggle']);
+        Route::post('/posts/{post:slug}/reactions', [ReactionController::class, 'toggle']);
+
+        Route::post('/reports/{type}/{id}', [ReportController::class, 'store'])->middleware('throttle:5,60');
+    });
 
     Route::get('/billing', [BillingController::class, 'show'])->name('billing.show');
     Route::post('/billing/checkout', [BillingController::class, 'checkout'])->name('billing.checkout');

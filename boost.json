@@ -9,8 +9,8 @@
     "nightwatch_mcp": false,
     "sail": false,
     "skills": [
+        "cashier-stripe-development",
         "laravel-best-practices",
-        "wayfinder-development",
-        "tailwindcss-development"
+        "wayfinder-development"
     ]
 }

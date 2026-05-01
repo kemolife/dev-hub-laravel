@@ -27,6 +27,8 @@ This folder contains every architecturally significant decision made in DevHub. 
 | 0019 | [Observability stack: Sentry + Telescope (no Horizon)](./0019-observability-stack.md) | Accepted | 2026-05-01 |
 | 0020 | [Denormalized counters for reactions and post counts](./0020-denormalized-counters.md) | Accepted | 2026-05-01 |
 | 0021 | [Tag normalization strategy](./0021-tag-normalization.md) | Accepted | 2026-05-01 |
+| 0022 | [Custom audit log vs. spatie/laravel-activitylog](./0022-audit-log-custom-vs-activitylog.md) | Accepted | 2026-05-01 |
+| 0023 | [No admin impersonation in API-only context](./0023-no-admin-impersonation.md) | Accepted | 2026-05-01 |
 
 ## Status Legend
 
