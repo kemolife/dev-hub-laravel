@@ -1,0 +1,177 @@
+/* DevHub Mockup Design Tokens
+ * These will eventually map to Tailwind config in the real Laravel app.
+ * Defining them here as CSS variables makes them easy to tweak across mockups.
+ */
+
+:root {
+  /* Colors */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8f7f4;
+  --bg-tertiary: #f1efe8;
+  --bg-info: #e6f1fb;
+  --text-primary: #1a1a1a;
+  --text-secondary: #5f5e5a;
+  --text-tertiary: #888780;
+  --text-info: #185fa5;
+  --border-tertiary: rgba(0, 0, 0, 0.08);
+  --border-secondary: rgba(0, 0, 0, 0.15);
+
+  /* Typography */
+  --font-sans: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", sans-serif;
+  --font-serif: "Tiempos Text", "Charter", Georgia, serif;
+  --font-mono: "JetBrains Mono", "Menlo", "Consolas", monospace;
+
+  /* Layout */
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--text-primary);
+  background: var(--bg-tertiary);
+  margin: 0;
+  padding: 24px;
+}
+
+.mockup-container {
+  max-width: 1080px;
+  margin: 0 auto;
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-lg);
+  border: 0.5px solid var(--border-tertiary);
+  overflow: hidden;
+}
+
+.topbar {
+  background: var(--bg-primary);
+  border-bottom: 0.5px solid var(--border-tertiary);
+  padding: 14px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.brand {
+  font-family: var(--font-serif);
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.nav {
+  display: flex;
+  gap: 20px;
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.nav-active { color: var(--text-primary); font-weight: 500; }
+
+.avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--bg-info);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-info);
+}
+
+.avatar-sm { width: 24px; height: 24px; font-size: 10px; }
+.avatar-lg { width: 36px; height: 36px; font-size: 13px; }
+
+input, textarea, button {
+  font-family: inherit;
+  font-size: 14px;
+}
+
+input[type="text"], input[type="search"] {
+  height: 32px;
+  padding: 0 12px;
+  border: 0.5px solid var(--border-tertiary);
+  border-radius: var(--radius-md);
+  background: var(--bg-primary);
+}
+
+input[type="text"]:focus {
+  outline: none;
+  border-color: var(--border-secondary);
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.04);
+}
+
+button {
+  height: 32px;
+  padding: 0 14px;
+  border: 0.5px solid var(--border-tertiary);
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: background 0.1s;
+}
+
+button:hover { background: var(--bg-secondary); }
+button.primary {
+  background: var(--text-primary);
+  color: var(--bg-primary);
+  border-color: var(--text-primary);
+}
+
+.tag {
+  font-size: 12px;
+  padding: 3px 10px;
+  border-radius: var(--radius-md);
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  display: inline-block;
+}
+
+.card {
+  background: var(--bg-primary);
+  border: 0.5px solid var(--border-tertiary);
+  border-radius: var(--radius-lg);
+  padding: 18px 20px;
+}
+
+.card + .card { margin-top: 12px; }
+
+.muted { color: var(--text-secondary); }
+.subtle { color: var(--text-tertiary); }
+
+h1 { font-size: 28px; font-weight: 500; line-height: 1.3; margin: 0 0 16px; }
+h2 { font-size: 18px; font-weight: 500; margin: 0; }
+h3 { font-size: 18px; font-weight: 500; margin: 0 0 8px; line-height: 1.4; }
+
+.prose {
+  font-family: var(--font-serif);
+  font-size: 18px;
+  line-height: 1.7;
+}
+
+.prose p { margin: 0 0 18px; }
+
+/* Grid layouts */
+.grid-feed {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 220px;
+  gap: 24px;
+  padding: 24px;
+}
+
+.grid-editor {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 240px;
+}
+
+.reading-column {
+  max-width: 580px;
+  margin: 0 auto;
+}

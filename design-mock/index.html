@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>DevHub — Design</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+
+<div style="max-width: 720px; margin: 40px auto;">
+
+  <h1 style="font-family: var(--font-serif);">DevHub Design</h1>
+  <p class="muted" style="margin: 0 0 32px; font-size: 16px;">Visual specifications for the Laravel build. Each mockup is a static HTML file using the same design tokens that will eventually become the Tailwind config.</p>
+
+  <div class="card">
+    <h3 style="margin: 0 0 4px;"><a href="mockups/01-homepage.html" style="color: var(--text-primary); text-decoration: none;">01 — Homepage feed</a></h3>
+    <p class="muted" style="margin: 0; font-size: 14px;">The first impression. Reading time foregrounded, no engagement counters in the feed.</p>
+  </div>
+
+  <div class="card">
+    <h3 style="margin: 0 0 4px;"><a href="mockups/02-post-detail.html" style="color: var(--text-primary); text-decoration: none;">02 — Post detail</a></h3>
+    <p class="muted" style="margin: 0; font-size: 14px;">The reading experience. Serif body, narrow column, reactions hidden until end of read.</p>
+  </div>
+
+  <div class="card">
+    <h3 style="margin: 0 0 4px;"><a href="mockups/03-editor.html" style="color: var(--text-primary); text-decoration: none;">03 — Post editor</a></h3>
+    <p class="muted" style="margin: 0; font-size: 14px;">The writing experience. Distraction-free with depth signals (word count, reading time, code blocks).</p>
+  </div>
+
+  <h2 style="margin: 32px 0 16px;">Design principles</h2>
+  <ol class="muted" style="font-size: 15px; line-height: 1.8;">
+    <li><strong style="color: var(--text-primary);">Calm over urgent</strong> — no badges, no red dots, no streaks</li>
+    <li><strong style="color: var(--text-primary);">Depth over breadth</strong> — reading time and word count are first-class signals</li>
+    <li><strong style="color: var(--text-primary);">Author over algorithm</strong> — chronological feed, no "for you"</li>
+    <li><strong style="color: var(--text-primary);">Whitespace is a feature</strong> — generous margins, no cramped UI</li>
+    <li><strong style="color: var(--text-primary);">Sentence case always</strong> — never Title Case, never ALL CAPS</li>
+  </ol>
+
+  <h2 style="margin: 32px 0 16px;">Design tokens</h2>
+  <p class="muted" style="margin: 0 0 16px; font-size: 15px;">All defined in <code>assets/styles.css</code> as CSS variables. When porting to Laravel, these become Tailwind <code>theme.extend</code> values.</p>
+
+</div>
+
+</body>
+</html>

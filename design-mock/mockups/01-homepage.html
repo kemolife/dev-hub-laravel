@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>DevHub — Homepage</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body>
+
+<div class="mockup-container">
+
+  <header class="topbar">
+    <div style="display: flex; align-items: center; gap: 28px;">
+      <span class="brand">DevHub</span>
+      <nav class="nav">
+        <a href="#" class="nav-active">Home</a>
+        <a href="#">Following</a>
+        <a href="#">Tags</a>
+        <a href="#">Bookmarks</a>
+      </nav>
+    </div>
+    <div style="display: flex; align-items: center; gap: 12px;">
+      <input type="search" placeholder="Search..." style="width: 180px;">
+      <div class="avatar">VK</div>
+    </div>
+  </header>
+
+  <div class="grid-feed">
+
+    <main>
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+        <h2>Recently published</h2>
+        <span class="subtle" style="font-size: 13px;">Sorted by depth, not engagement</span>
+      </div>
+
+      <article class="card">
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px; font-size: 13px;" class="muted">
+          <div class="avatar avatar-sm">SR</div>
+          <span style="color: var(--text-primary); font-weight: 500;">Sara Rinaldi</span>
+          <span>·</span>
+          <span>3 hours ago</span>
+          <span>·</span>
+          <span>22 min read</span>
+        </div>
+        <h3>Why we replaced Redis with Postgres for queues — and the three months it took to find out we were wrong</h3>
+        <p class="muted" style="margin: 0 0 12px; font-size: 14px; line-height: 1.6;">A long, honest postmortem from a team that chased simplicity into a corner. Includes the migration script, the metrics that lied to us, and what we shipped instead.</p>
+        <div style="display: flex; gap: 6px;">
+          <span class="tag">postgres</span>
+          <span class="tag">infrastructure</span>
+          <span class="tag">postmortem</span>
+        </div>
+      </article>
+
+      <article class="card">
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px; font-size: 13px;" class="muted">
+          <div class="avatar avatar-sm" style="background: #EEEDFE; color: #3C3489;">DK</div>
+          <span style="color: var(--text-primary); font-weight: 500;">Daniel Kobayashi</span>
+          <span>·</span>
+          <span>yesterday</span>
+          <span>·</span>
+          <span>14 min read</span>
+        </div>
+        <h3>A patient walk through Rust's borrow checker for people who already know it intellectually but still fight it daily</h3>
+        <p class="muted" style="margin: 0 0 12px; font-size: 14px; line-height: 1.6;">No clever metaphors. Just the rules, the failure modes, and the actual mental model that makes them stop feeling arbitrary.</p>
+        <div style="display: flex; gap: 6px;">
+          <span class="tag">rust</span>
+          <span class="tag">deep-dive</span>
+        </div>
+      </article>
+
+      <article class="card">
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px; font-size: 13px;" class="muted">
+          <div class="avatar avatar-sm" style="background: #E1F5EE; color: #085041;">AM</div>
+          <span style="color: var(--text-primary); font-weight: 500;">Anna Meijer</span>
+          <span>·</span>
+          <span>2 days ago</span>
+          <span>·</span>
+          <span>31 min read</span>
+        </div>
+        <h3>Notes from running a Postgres database with 4 billion rows on a single machine for five years</h3>
+        <p class="muted" style="margin: 0 0 12px; font-size: 14px; line-height: 1.6;">What broke first, what surprised us, what we'd do the same again. Includes vacuum tuning that took us two years to land on.</p>
+        <div style="display: flex; gap: 6px;">
+          <span class="tag">postgres</span>
+          <span class="tag">scaling</span>
+          <span class="tag">war-stories</span>
+        </div>
+      </article>
+
+      <article class="card">
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px; font-size: 13px;" class="muted">
+          <div class="avatar avatar-sm" style="background: #FAECE7; color: #712B13;">JT</div>
+          <span style="color: var(--text-primary); font-weight: 500;">Joseph Tan</span>
+          <span>·</span>
+          <span>3 days ago</span>
+          <span>·</span>
+          <span>18 min read</span>
+        </div>
+        <h3>Building a small CRDT from scratch to finally understand what one is</h3>
+        <p class="muted" style="margin: 0 0 12px; font-size: 14px; line-height: 1.6;">Step-by-step construction with code, diagrams, and three failed attempts before the working version.</p>
+        <div style="display: flex; gap: 6px;">
+          <span class="tag">distributed-systems</span>
+          <span class="tag">tutorial</span>
+        </div>
+      </article>
+    </main>
+
+    <aside>
+      <div class="card" style="margin-bottom: 16px;">
+        <p style="font-size: 13px; margin: 0 0 10px; font-weight: 500;" class="muted">Quietly trending</p>
+        <div style="display: flex; flex-direction: column; gap: 6px;">
+          <span style="font-size: 13px;">postgres</span>
+          <span style="font-size: 13px;">rust</span>
+          <span style="font-size: 13px;">distributed-systems</span>
+          <span style="font-size: 13px;">debugging</span>
+          <span style="font-size: 13px;">postmortem</span>
+        </div>
+      </div>
+
+      <div style="background: var(--bg-secondary); border-radius: var(--radius-lg); padding: 14px 16px;">
+        <p style="font-size: 13px; margin: 0 0 6px; font-weight: 500;">Weekly digest, Mondays</p>
+        <p style="font-size: 12px; margin: 0 0 10px; line-height: 1.5;" class="muted">One email, the deepest things published this week. No daily nags.</p>
+        <button style="font-size: 12px; height: 28px;">Subscribe</button>
+      </div>
+    </aside>
+
+  </div>
+</div>
+
+</body>
+</html>

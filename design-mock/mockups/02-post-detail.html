@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>DevHub — Post detail</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body>
+
+<div class="mockup-container">
+
+  <header class="topbar">
+    <span class="brand">DevHub</span>
+    <div style="display: flex; align-items: center; gap: 12px;">
+      <button>Bookmark</button>
+      <div class="avatar">VK</div>
+    </div>
+  </header>
+
+  <div style="background: var(--bg-primary); padding: 40px 64px;">
+    <div class="reading-column">
+
+      <div style="display: flex; gap: 6px; margin-bottom: 16px;">
+        <span class="tag">postgres</span>
+        <span class="tag">infrastructure</span>
+        <span class="tag">postmortem</span>
+      </div>
+
+      <h1>Why we replaced Redis with Postgres for queues — and the three months it took to find out we were wrong</h1>
+
+      <div style="display: flex; align-items: center; gap: 12px; margin: 0 0 32px; padding-bottom: 24px; border-bottom: 0.5px solid var(--border-tertiary);">
+        <div class="avatar avatar-lg">SR</div>
+        <div>
+          <p style="margin: 0; font-size: 14px; font-weight: 500;">Sara Rinaldi</p>
+          <p style="margin: 0; font-size: 13px;" class="muted">Published 3 hours ago · 22 min read · 4,200 words</p>
+        </div>
+      </div>
+
+      <div class="prose">
+        <p>In late 2024 we made a decision that felt obvious at the time: we'd consolidate our infrastructure by moving our queue workload from Redis onto Postgres. One database, fewer services, simpler ops. The team agreed in twenty minutes.</p>
+
+        <p>What followed was three months of progressively worse production incidents, a rewrite of our worker layer, and a careful walk-back to a setup that, in hindsight, almost any senior engineer should have predicted.</p>
+
+        <p>This is the long version, with the metrics that misled us, the moment we knew, and the boring final answer.</p>
+
+        <h2 style="margin: 32px 0 12px;">The setup we started with</h2>
+
+        <p>Our system processed about 8 million jobs a day across four queues: email delivery, webhook fan-out, search indexing, and a long-running ETL pipeline. Redis was holding all of it through a standard library setup...</p>
+
+        <pre style="background: #1a1a1a; border-radius: var(--radius-md); padding: 16px 20px; margin: 20px 0; font-family: var(--font-mono); font-size: 13px; line-height: 1.6; color: #e0e0e0; overflow-x: auto;"><span style="color: #87CEEB;">QUEUE_DRIVER</span>=<span style="color: #98D982;">redis</span>
+<span style="color: #87CEEB;">REDIS_HOST</span>=<span style="color: #98D982;">redis-primary.internal</span>
+<span style="color: #87CEEB;">REDIS_DB_QUEUE</span>=<span style="color: #98D982;">2</span>
+<span style="color: #87CEEB;">QUEUE_RETRY_AFTER</span>=<span style="color: #98D982;">90</span></pre>
+
+        <p>It worked well. So well, in fact, that we'd stopped paying attention to it — which is, I now understand, exactly the kind of system you should not move...</p>
+
+        <p style="color: var(--text-tertiary); font-style: italic;">[continues for 18 more minutes]</p>
+      </div>
+
+    </div>
+  </div>
+
+  <div style="background: var(--bg-tertiary); padding: 24px 64px; border-top: 0.5px solid var(--border-tertiary);">
+    <div class="reading-column">
+      <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 16px;">
+        <p style="margin: 0; font-size: 14px; font-weight: 500;">Reactions</p>
+        <p style="margin: 0; font-size: 12px;" class="subtle">visible after you finish reading</p>
+      </div>
+      <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+        <button>Insightful</button>
+        <button>Mind-blown</button>
+        <button>Fire</button>
+        <button>Heart</button>
+        <button>Like</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>
