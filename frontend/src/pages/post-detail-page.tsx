@@ -5,10 +5,13 @@ import { Topbar } from '../components/layout/topbar';
 import { PostHeader } from '../features/post/post-header';
 import { ProseContent } from '../features/post/prose-content';
 import { ReactionBar } from '../features/post/reaction-bar';
+import { CommentsSection } from '../features/comments/comments-section';
+import { useAuth } from '../features/auth/auth-context';
 import { mockPosts } from '../data/mock';
 
 export function PostDetailPage() {
   const { id } = useParams<{ id: string }>();
+  const { token } = useAuth();
   const post = mockPosts.find((p) => p.id === id);
 
   if (!post) {
@@ -69,6 +72,7 @@ export function PostDetailPage() {
       </div>
 
       <ReactionBar />
+      <CommentsSection postSlug={id!} token={token} />
     </div>
   );
 }
