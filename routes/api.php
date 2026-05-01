@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\V1\TagController;
 use App\Http\Controllers\Api\V1\TokenController;
 use App\Http\Controllers\Api\V1\TwoFactorController;
 use App\Http\Controllers\Api\V1\UserController;
+use App\Http\Controllers\Api\V1\WebhookEndpointController;
 use App\Http\Middleware\UpdateLastSeenAt;
 use Illuminate\Support\Facades\Route;
 use Laravel\Cashier\Http\Controllers\WebhookController;
@@ -39,7 +40,7 @@ Route::middleware(['auth:sanctum', UpdateLastSeenAt::class])->group(function ():
     Route::post('/tokens', [TokenController::class, 'store']);
     Route::delete('/tokens/{tokenId}', [TokenController::class, 'destroy']);
 
-    Route::post('/posts', [PostManagementController::class, 'store']);
+    Route::post('/posts', [PostManagementController::class, 'store'])->middleware('idempotent');
     Route::put('/posts/{post:slug}', [PostManagementController::class, 'update']);
     Route::delete('/posts/{post:slug}', [PostManagementController::class, 'destroy']);
     Route::post('/posts/{post:slug}/publish', [PostManagementController::class, 'publish']);
@@ -50,6 +51,12 @@ Route::middleware(['auth:sanctum', UpdateLastSeenAt::class])->group(function ():
     Route::delete('/posts/{post:slug}/comments/{comment}', [CommentController::class, 'destroy']);
 
     Route::post('/posts/{post:slug}/reactions', [ReactionController::class, 'toggle']);
+
+    Route::get('/webhooks', [WebhookEndpointController::class, 'index'])->name('webhooks.index');
+    Route::post('/webhooks', [WebhookEndpointController::class, 'store'])->name('webhooks.store')->middleware('idempotent');
+    Route::put('/webhooks/{webhookEndpoint}', [WebhookEndpointController::class, 'update'])->name('webhooks.update');
+    Route::delete('/webhooks/{webhookEndpoint}', [WebhookEndpointController::class, 'destroy'])->name('webhooks.destroy');
+    Route::post('/webhooks/{webhookEndpoint}/test', [WebhookEndpointController::class, 'test'])->name('webhooks.test');
 
     Route::get('/billing', [BillingController::class, 'show'])->name('billing.show');
     Route::post('/billing/checkout', [BillingController::class, 'checkout'])->name('billing.checkout');

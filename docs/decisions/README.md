@@ -27,6 +27,8 @@ This folder contains every architecturally significant decision made in DevHub. 
 | 0019 | [Observability stack: Sentry + Telescope (no Horizon)](./0019-observability-stack.md) | Accepted | 2026-05-01 |
 | 0020 | [Denormalized counters for reactions and post counts](./0020-denormalized-counters.md) | Accepted | 2026-05-01 |
 | 0021 | [Tag normalization strategy](./0021-tag-normalization.md) | Accepted | 2026-05-01 |
+| 0022 | [API versioning strategy: URL-based](./0022-api-versioning-strategy.md) | Accepted | 2026-05-01 |
+| 0023 | [Webhook signing format: HMAC-SHA256](./0023-webhook-signing-format.md) | Accepted | 2026-05-01 |
 
 ## Status Legend
 

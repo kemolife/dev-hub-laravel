@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Events\CommentPosted;
+use App\Events\PostPublished;
+use App\Listeners\DispatchWebhooksForEvent;
 use App\Models\Comment;
 use App\Models\Post;
 use App\Models\User;
@@ -11,11 +14,15 @@ use App\Observers\PostObserver;
 use App\Policies\CommentPolicy;
 use App\Policies\PostPolicy;
 use Carbon\CarbonImmutable;
+use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Events\QueryExecuted;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
 
@@ -38,6 +45,8 @@ class AppServiceProvider extends ServiceProvider
         $this->configureGates();
         $this->configureObservers();
         $this->configureSlowQueryLogging();
+        $this->configureRateLimiters();
+        $this->configureEventListeners();
     }
 
     /**
@@ -73,6 +82,34 @@ class AppServiceProvider extends ServiceProvider
     protected function configureObservers(): void
     {
         Post::observe(PostObserver::class);
+    }
+
+    protected function configureRateLimiters(): void
+    {
+        RateLimiter::for('api-anonymous', function (Request $request): Limit {
+            return Limit::perHour(60)->by($request->ip());
+        });
+
+        RateLimiter::for('api-authenticated', function (Request $request): Limit {
+            if ($request->user()) {
+                return Limit::perHour(1000)->by((string) $request->user()->id);
+            }
+
+            return Limit::perHour(60)->by($request->ip());
+        });
+
+        RateLimiter::for('login', function (Request $request): Limit {
+            return Limit::perMinute(5)->by($request->input('email').'|'.$request->ip());
+        });
+
+        RateLimiter::for('password-reset', function (Request $request): Limit {
+            return Limit::perHour(3)->by((string) $request->input('email'));
+        });
+    }
+
+    protected function configureEventListeners(): void
+    {
+        Event::listen([PostPublished::class, CommentPosted::class], DispatchWebhooksForEvent::class);
     }
 
     /**
