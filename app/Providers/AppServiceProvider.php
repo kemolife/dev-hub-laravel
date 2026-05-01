@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Models\Post;
 use App\Models\User;
+use App\Observers\PostObserver;
+use App\Policies\PostPolicy;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Events\QueryExecuted;
 use Illuminate\Support\Facades\Date;
@@ -31,6 +34,7 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->configureDefaults();
         $this->configureGates();
+        $this->configureObservers();
         $this->configureSlowQueryLogging();
     }
 
@@ -41,6 +45,7 @@ class AppServiceProvider extends ServiceProvider
     {
         Gate::define('admin', fn (User $user): bool => $user->isAdmin());
         Gate::define('moderator', fn (User $user): bool => $user->isModerator());
+        Gate::policy(Post::class, PostPolicy::class);
     }
 
     protected function configureDefaults(): void
@@ -60,6 +65,11 @@ class AppServiceProvider extends ServiceProvider
                 ->uncompromised()
             : null,
         );
+    }
+
+    protected function configureObservers(): void
+    {
+        Post::observe(PostObserver::class);
     }
 
     /**
