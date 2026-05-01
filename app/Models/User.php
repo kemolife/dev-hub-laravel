@@ -22,6 +22,8 @@ use Laravel\Sanctum\HasApiTokens;
  * @property Role $role
  * @property string|null $plan
  * @property Carbon|null $trial_ends_at
+ * @property Carbon|null $onboarding_completed_at
+ * @property array<string>|null $onboarding_steps
  */
 #[Fillable([
     'name',
@@ -56,6 +58,8 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'last_seen_at' => 'datetime',
+            'onboarding_completed_at' => 'datetime',
+            'onboarding_steps' => 'array',
             'password' => 'hashed',
             'trial_ends_at' => 'datetime',
             'two_factor_confirmed_at' => 'datetime',

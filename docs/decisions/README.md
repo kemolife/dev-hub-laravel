@@ -27,6 +27,8 @@ This folder contains every architecturally significant decision made in DevHub. 
 | 0019 | [Observability stack: Sentry + Telescope (no Horizon)](./0019-observability-stack.md) | Accepted | 2026-05-01 |
 | 0020 | [Denormalized counters for reactions and post counts](./0020-denormalized-counters.md) | Accepted | 2026-05-01 |
 | 0021 | [Tag normalization strategy](./0021-tag-normalization.md) | Accepted | 2026-05-01 |
+| 0022 | [Onboarding step storage: JSON column vs dedicated table](./0022-onboarding-storage-json-vs-table.md) | Accepted | 2026-05-01 |
+| 0023 | [Feature flag rollout strategy via Laravel Pennant](./0023-feature-flag-rollout-pennant.md) | Accepted | 2026-05-01 |
 
 ## Status Legend
 

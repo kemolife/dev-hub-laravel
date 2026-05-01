@@ -5,6 +5,9 @@ declare(strict_types=1);
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\BillingController;
 use App\Http\Controllers\Api\V1\CommentController;
+use App\Http\Controllers\Api\V1\FeatureFlagController;
+use App\Http\Controllers\Api\V1\FeedbackController;
+use App\Http\Controllers\Api\V1\OnboardingController;
 use App\Http\Controllers\Api\V1\PostController;
 use App\Http\Controllers\Api\V1\PostManagementController;
 use App\Http\Controllers\Api\V1\ReactionController;
@@ -31,6 +34,9 @@ Route::post('/stripe/webhook', [WebhookController::class, 'handleWebhook'])
 Route::get('/tags', [TagController::class, 'index']);
 Route::get('/tags/{tag:slug}', [TagController::class, 'show']);
 
+Route::get('/features', FeatureFlagController::class);
+Route::post('/feedback', [FeedbackController::class, 'store']);
+
 Route::middleware(['auth:sanctum', UpdateLastSeenAt::class])->group(function (): void {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/me', [UserController::class, 'me']);
@@ -50,6 +56,8 @@ Route::middleware(['auth:sanctum', UpdateLastSeenAt::class])->group(function ():
     Route::delete('/posts/{post:slug}/comments/{comment}', [CommentController::class, 'destroy']);
 
     Route::post('/posts/{post:slug}/reactions', [ReactionController::class, 'toggle']);
+
+    Route::get('/onboarding', [OnboardingController::class, 'show']);
 
     Route::get('/billing', [BillingController::class, 'show'])->name('billing.show');
     Route::post('/billing/checkout', [BillingController::class, 'checkout'])->name('billing.checkout');
