@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\Api\V1\AuthController;
+use App\Http\Controllers\Api\V1\CommentController;
 use App\Http\Controllers\Api\V1\PostController;
 use App\Http\Controllers\Api\V1\PostManagementController;
 use App\Http\Controllers\Api\V1\TokenController;
@@ -17,6 +18,7 @@ Route::post('/two-factor-challenge', [TwoFactorController::class, 'challenge'])-
 
 Route::get('/posts', [PostController::class, 'index']);
 Route::get('/posts/{post:slug}', [PostController::class, 'show']);
+Route::get('/posts/{post:slug}/comments', [CommentController::class, 'index']);
 
 Route::middleware(['auth:sanctum', UpdateLastSeenAt::class])->group(function (): void {
     Route::post('/logout', [AuthController::class, 'logout']);
@@ -31,4 +33,8 @@ Route::middleware(['auth:sanctum', UpdateLastSeenAt::class])->group(function ():
     Route::delete('/posts/{post:slug}', [PostManagementController::class, 'destroy']);
     Route::post('/posts/{post:slug}/publish', [PostManagementController::class, 'publish']);
     Route::post('/posts/{post:slug}/archive', [PostManagementController::class, 'archive']);
+
+    Route::post('/posts/{post:slug}/comments', [CommentController::class, 'store']);
+    Route::put('/posts/{post:slug}/comments/{comment}', [CommentController::class, 'update']);
+    Route::delete('/posts/{post:slug}/comments/{comment}', [CommentController::class, 'destroy']);
 });

@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Models\Comment;
 use App\Models\Post;
 use App\Models\User;
 use App\Observers\PostObserver;
+use App\Policies\CommentPolicy;
 use App\Policies\PostPolicy;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Events\QueryExecuted;
@@ -46,6 +48,7 @@ class AppServiceProvider extends ServiceProvider
         Gate::define('admin', fn (User $user): bool => $user->isAdmin());
         Gate::define('moderator', fn (User $user): bool => $user->isModerator());
         Gate::policy(Post::class, PostPolicy::class);
+        Gate::policy(Comment::class, CommentPolicy::class);
     }
 
     protected function configureDefaults(): void
