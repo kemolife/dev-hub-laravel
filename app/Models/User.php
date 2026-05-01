@@ -12,6 +12,7 @@ use Filament\Panel;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -30,6 +31,11 @@ use Laravel\Sanctum\HasApiTokens;
  * @property Carbon|null $suspended_at
  * @property Carbon|null $suspended_until
  * @property string|null $suspension_reason
+ * @property Carbon|null $last_seen_at
+ * @property int $followers_count
+ * @property int $following_count
+ * @property string|null $referral_code
+ * @property int|null $referred_by_user_id
  */
 #[Fillable([
     'name',
@@ -46,6 +52,10 @@ use Laravel\Sanctum\HasApiTokens;
     'suspended_at',
     'suspended_until',
     'suspension_reason',
+    'followers_count',
+    'following_count',
+    'referral_code',
+    'referred_by_user_id',
 ])]
 #[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token'])]
 class User extends Authenticatable implements FilamentUser
@@ -59,6 +69,7 @@ class User extends Authenticatable implements FilamentUser
             $user->public_id ??= (string) Str::uuid();
             $user->role ??= Role::Member;
             $user->plan ??= 'free';
+            $user->referral_code ??= Str::random(8);
         });
     }
 
@@ -75,6 +86,8 @@ class User extends Authenticatable implements FilamentUser
             'role' => Role::class,
             'suspended_at' => 'datetime',
             'suspended_until' => 'datetime',
+            'followers_count' => 'integer',
+            'following_count' => 'integer',
         ];
     }
 
@@ -100,6 +113,25 @@ class User extends Authenticatable implements FilamentUser
     public function webhookEndpoints(): HasMany
     {
         return $this->hasMany(WebhookEndpoint::class);
+    }
+
+    /** @return BelongsToMany<User, $this> */
+    public function following(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'follows', 'follower_id', 'followee_id')
+            ->withTimestamps('created_at', false);
+    }
+
+    /** @return BelongsToMany<User, $this> */
+    public function followers(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'follows', 'followee_id', 'follower_id')
+            ->withTimestamps('created_at', false);
+    }
+
+    public function isFollowing(User $user): bool
+    {
+        return $this->following()->where('followee_id', $user->id)->exists();
     }
 
     public function isAdmin(): bool

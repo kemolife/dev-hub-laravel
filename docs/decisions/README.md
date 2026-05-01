@@ -35,6 +35,8 @@ This folder contains every architecturally significant decision made in DevHub. 
 | 0027 | [Webhook signing format: HMAC-SHA256](./0027-webhook-signing-format.md) | Accepted | 2026-05-01 |
 | 0028 | [Custom audit log vs. spatie/laravel-activitylog](./0028-audit-log-custom-vs-activitylog.md) | Accepted | 2026-05-01 |
 | 0029 | [No admin impersonation in API-only context](./0029-no-admin-impersonation.md) | Accepted | 2026-05-01 |
+| 0030 | [Recommendation approach: rules-based SQL feed](./0030-recommendation-approach.md) | Accepted | 2026-05-01 |
+| 0031 | [Referral reward structure: tracking only](./0031-referral-reward-structure.md) | Accepted | 2026-05-01 |
 
 ## Status Legend
 

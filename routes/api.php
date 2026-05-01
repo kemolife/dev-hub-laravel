@@ -7,6 +7,8 @@ use App\Http\Controllers\Api\V1\BillingController;
 use App\Http\Controllers\Api\V1\CommentController;
 use App\Http\Controllers\Api\V1\FeatureFlagController;
 use App\Http\Controllers\Api\V1\FeedbackController;
+use App\Http\Controllers\Api\V1\FeedController;
+use App\Http\Controllers\Api\V1\FollowController;
 use App\Http\Controllers\Api\V1\NotificationController;
 use App\Http\Controllers\Api\V1\NotificationPreferenceController;
 use App\Http\Controllers\Api\V1\OnboardingController;
@@ -44,6 +46,9 @@ Route::get('/tags/{tag:slug}', [TagController::class, 'show']);
 Route::get('/features', FeatureFlagController::class);
 Route::post('/feedback', [FeedbackController::class, 'store']);
 
+Route::get('/users/{user:username}/followers', [FollowController::class, 'followers']);
+Route::get('/users/{user:username}/following', [FollowController::class, 'following']);
+
 Route::middleware(['auth:sanctum', UpdateLastSeenAt::class])->group(function (): void {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/me', [UserController::class, 'me']);
@@ -67,6 +72,9 @@ Route::middleware(['auth:sanctum', UpdateLastSeenAt::class])->group(function ():
 
         Route::post('/reports/{type}/{id}', [ReportController::class, 'store'])->middleware('throttle:5,60');
     });
+
+    Route::get('/feed', FeedController::class);
+    Route::post('/users/{user:username}/follow', [FollowController::class, 'toggle']);
 
     // Notifications
     Route::get('/notifications', [NotificationController::class, 'index']);
