@@ -16,7 +16,7 @@ This folder contains every architecturally significant decision made in DevHub. 
 | 0008 | [Markdown rendering: render-on-save](./0008-markdown-render-strategy.md) | Proposed | TBD |
 | 0009 | [Search engine: Meilisearch via Scout](./0009-search-engine.md) | Accepted | 2026-05-01 |
 | 0010 | [Notification preference granularity: per-type, per-channel](./0010-notification-preferences.md) | Accepted | 2026-05-01 |
-| 0011 | [Real-time: Reverb over Pusher](./0011-realtime-reverb.md) | Proposed | TBD |
+| 0011 | [Real-time: Reverb over Pusher](./0011-realtime-reverb.md) | Accepted | 2026-05-01 |
 | 0012 | [API versioning strategy](./0012-api-versioning.md) | Proposed | TBD |
 | 0013 | [Audit logging approach](./0013-audit-logging.md) | Proposed | TBD |
 | 0014 | [Bookmarks design](./0014-bookmarks.md) | Proposed | TBD |
@@ -30,6 +30,7 @@ This folder contains every architecturally significant decision made in DevHub. 
 | 0022 | [Weekly digest: scheduled job, not a separate queue](./0022-digest-implementation.md) | Accepted | 2026-05-01 |
 | 0023 | [Onboarding step storage: JSON column vs dedicated table](./0023-onboarding-storage-json-vs-table.md) | Accepted | 2026-05-01 |
 | 0024 | [Feature flag rollout strategy via Laravel Pennant](./0024-feature-flag-rollout-pennant.md) | Accepted | 2026-05-01 |
+| 0025 | [Broadcast payload strategy: minimal payload, frontend re-fetches](./0025-broadcast-payload-strategy.md) | Accepted | 2026-05-01 |
 
 ## Status Legend
 
