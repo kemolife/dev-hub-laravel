@@ -20,3 +20,16 @@ export interface Post {
 }
 
 export type Tag = string;
+
+export interface User {
+  id: string;
+  name: string;
+  username: string;
+  email: string;
+  bio: string | null;
+  avatar_path: string | null;
+  website_url: string | null;
+  role: string;
+  email_verified_at: string | null;
+  created_at: string;
+}

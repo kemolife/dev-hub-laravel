@@ -1,6 +1,8 @@
-import { NavLink } from 'react-router';
+import { Link, NavLink } from 'react-router';
 import { Avatar } from '../components/ui/avatar';
+import { Button } from '../components/ui/button';
 import { Topbar } from '../components/layout/topbar';
+import { useAuth } from '../features/auth/auth-context';
 import { NewsletterWidget } from '../features/feed/newsletter-widget';
 import { PostCard } from '../features/feed/post-card';
 import { TrendingSidebar } from '../features/feed/trending-sidebar';
@@ -14,6 +16,8 @@ const NAV_LINKS = [
 ];
 
 export function HomePage() {
+  const { user, logout } = useAuth();
+
   return (
     <div
       style={{
@@ -67,7 +71,44 @@ export function HomePage() {
                 backgroundColor: 'var(--color-bg-primary)',
               }}
             />
-            <Avatar initials="VK" size="md" />
+            {user ? (
+              <div className="flex items-center gap-2">
+                <Avatar
+                  initials={user.name
+                    .split(' ')
+                    .map((n) => n[0])
+                    .join('')
+                    .slice(0, 2)
+                    .toUpperCase()}
+                  size="md"
+                />
+                <button
+                  onClick={() => logout()}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    cursor: 'pointer',
+                    fontSize: 13,
+                    color: 'var(--color-text-secondary)',
+                  }}
+                >
+                  Sign out
+                </button>
+              </div>
+            ) : (
+              <div className="flex items-center gap-2">
+                <Button variant="default" onClick={() => {}}>
+                  <Link to="/login" style={{ textDecoration: 'none', color: 'inherit' }}>
+                    Sign in
+                  </Link>
+                </Button>
+                <Button variant="primary" onClick={() => {}}>
+                  <Link to="/register" style={{ textDecoration: 'none', color: 'inherit' }}>
+                    Get started
+                  </Link>
+                </Button>
+              </div>
+            )}
           </>
         }
       />
