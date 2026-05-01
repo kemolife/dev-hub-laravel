@@ -10,7 +10,7 @@ import { mockPosts, mockTags } from '../data/mock';
 
 const NAV_LINKS = [
   { label: 'Home', to: '/' },
-  { label: 'Following', to: '/following' },
+  { label: 'Following', to: '/feed' },
   { label: 'Tags', to: '/tags' },
   { label: 'Bookmarks', to: '/bookmarks' },
 ];

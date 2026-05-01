@@ -2,9 +2,11 @@ import { Navigate, useLocation } from 'react-router';
 import { createBrowserRouter } from 'react-router';
 import { useAuth } from './features/auth/auth-context';
 import { EditorPage } from './pages/editor-page';
+import { FeedPage } from './pages/feed-page';
 import { HomePage } from './pages/home-page';
 import { LoginPage } from './pages/login-page';
 import { PostDetailPage } from './pages/post-detail-page';
+import { ProfilePage } from './pages/profile-page';
 import { RegisterPage } from './pages/register-page';
 import { TwoFactorPage } from './pages/two-factor-page';
 
@@ -32,6 +34,18 @@ export const router = createBrowserRouter([
     element: (
       <RequireAuth>
         <EditorPage />
+      </RequireAuth>
+    ),
+  },
+  {
+    path: '/u/:username',
+    element: <ProfilePage />,
+  },
+  {
+    path: '/feed',
+    element: (
+      <RequireAuth>
+        <FeedPage />
       </RequireAuth>
     ),
   },
