@@ -58,6 +58,16 @@ return [
             'ignore_exceptions' => false,
         ],
 
+        /*
+         * Production stack: combines daily file logs with Slack alerts for critical errors.
+         * Set LOG_STACK=production in production .env to activate this channel.
+         */
+        'production' => [
+            'driver' => 'stack',
+            'channels' => ['daily', 'slack'],
+            'ignore_exceptions' => false,
+        ],
+
         'single' => [
             'driver' => 'single',
             'path' => storage_path('logs/laravel.log'),
@@ -78,7 +88,7 @@ return [
             'url' => env('LOG_SLACK_WEBHOOK_URL'),
             'username' => env('LOG_SLACK_USERNAME', env('APP_NAME', 'Laravel')),
             'emoji' => env('LOG_SLACK_EMOJI', ':boom:'),
-            'level' => env('LOG_LEVEL', 'critical'),
+            'level' => 'critical',
             'replace_placeholders' => true,
         ],
 
