@@ -3,11 +3,13 @@ import { createBrowserRouter } from 'react-router';
 import { useAuth } from './features/auth/auth-context';
 import { BillingPage } from './pages/billing-page';
 import { EditorPage } from './pages/editor-page';
+import { FeedPage } from './pages/feed-page';
 import { HomePage } from './pages/home-page';
 import { LoginPage } from './pages/login-page';
 import { NotificationPreferencesPage } from './pages/notification-preferences-page';
 import { NotificationsPage } from './pages/notifications-page';
 import { PostDetailPage } from './pages/post-detail-page';
+import { ProfilePage } from './pages/profile-page';
 import { RegisterPage } from './pages/register-page';
 import { SearchPage } from './pages/search-page';
 import { TagDetailPage } from './pages/tag-detail-page';
@@ -54,6 +56,18 @@ export const router = createBrowserRouter([
     element: (
       <RequireAuth>
         <NotificationPreferencesPage />
+      </RequireAuth>
+    ),
+  },
+  {
+    path: '/u/:username',
+    element: <ProfilePage />,
+  },
+  {
+    path: '/feed',
+    element: (
+      <RequireAuth>
+        <FeedPage />
       </RequireAuth>
     ),
   },

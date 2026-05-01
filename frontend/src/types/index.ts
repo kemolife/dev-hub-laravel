@@ -126,3 +126,35 @@ export interface ApiPreference {
   channel_label: string;
   enabled: boolean;
 }
+
+export interface ApiPostAuthor {
+  id: number;
+  name: string;
+  username: string;
+  avatar_path: string | null;
+}
+
+export interface ApiPostTag {
+  id: number;
+  name: string;
+  slug: string;
+}
+
+export interface ApiUser {
+  id: number;
+  name: string;
+  username: string;
+  bio: string | null;
+  avatar_path: string | null;
+  website_url: string | null;
+  followers_count: number;
+  following_count: number;
+  created_at: string;
+}
+
+export interface UserSummary {
+  id: number;
+  name: string;
+  username: string;
+  avatar_path: string | null;
+}
