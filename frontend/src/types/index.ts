@@ -33,3 +33,20 @@ export interface User {
   email_verified_at: string | null;
   created_at: string;
 }
+
+export interface BillingStatus {
+  plan: 'free' | 'pro' | 'pro_annual';
+  status: 'active' | 'cancelled' | 'on_grace_period' | 'trialing' | null;
+  trial_ends_at: string | null;
+  renews_at: string | null;
+  cancelled_at: string | null;
+  ends_at: string | null;
+}
+
+export interface Invoice {
+  id: string;
+  date: string;
+  amount: string;
+  status: string;
+  download_url: string;
+}

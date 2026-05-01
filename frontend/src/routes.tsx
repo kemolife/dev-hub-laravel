@@ -1,6 +1,7 @@
 import { Navigate, useLocation } from 'react-router';
 import { createBrowserRouter } from 'react-router';
 import { useAuth } from './features/auth/auth-context';
+import { BillingPage } from './pages/billing-page';
 import { EditorPage } from './pages/editor-page';
 import { HomePage } from './pages/home-page';
 import { LoginPage } from './pages/login-page';
@@ -46,5 +47,13 @@ export const router = createBrowserRouter([
   {
     path: '/two-factor',
     element: <TwoFactorPage />,
+  },
+  {
+    path: '/settings/billing',
+    element: (
+      <RequireAuth>
+        <BillingPage />
+      </RequireAuth>
+    ),
   },
 ]);
