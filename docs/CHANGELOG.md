@@ -11,6 +11,9 @@ Each entry should answer: **what changed** and **why it matters to the user**. I
 ## [Unreleased]
 
 ### Added
+- Real-time broadcasting via Laravel Reverb: new comments on a post broadcast on `posts.{id}` channel; clients can subscribe without polling
+- Private per-user notification channel (`users.{id}.notifications`) broadcasts when a new notification is created; only the owning user can subscribe
+- Presence channel (`posts.{id}.viewers`) tracks who is currently reading a post
 - Reactions: authenticated users can toggle 5 reaction types (Like, Insightful, Fire, Heart, Mind Blown) on posts via `POST /api/v1/posts/{slug}/reactions`
 - Tags: posts can have up to 5 normalized tags; slugs auto-generated and deduplicated
 - Public tag listing and lookup via `GET /api/v1/tags` and `GET /api/v1/tags/{slug}`

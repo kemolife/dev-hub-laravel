@@ -4,31 +4,28 @@ declare(strict_types=1);
 
 namespace App\Events;
 
-use App\Models\Comment;
-use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
+use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class CommentPosted implements ShouldBroadcast
+class NotificationCreated implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    /**
-     * @param  array<string>  $mentionedUsernames
-     */
     public function __construct(
-        public readonly Comment $comment,
-        public readonly array $mentionedUsernames,
+        public readonly int $userId,
+        public readonly string $notificationId,
+        public readonly string $type,
     ) {}
 
     /**
-     * @return array<int, Channel>
+     * @return array<int, PrivateChannel>
      */
     public function broadcastOn(): array
     {
-        return [new Channel('posts.'.$this->comment->commentable_id)];
+        return [new PrivateChannel('users.'.$this->userId.'.notifications')];
     }
 
     /**
@@ -37,14 +34,13 @@ class CommentPosted implements ShouldBroadcast
     public function broadcastWith(): array
     {
         return [
-            'comment_id' => $this->comment->id,
-            'author' => $this->comment->user?->username,
-            'created_at' => $this->comment->created_at,
+            'id' => $this->notificationId,
+            'type' => $this->type,
         ];
     }
 
     public function broadcastAs(): string
     {
-        return 'comment.posted';
+        return 'notification.created';
     }
 }
