@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Events\TrialEnded;
 use App\Jobs\HandleTrialExpiredJob;
+use App\Jobs\SendWeeklyDigestJob;
 use App\Models\User;
 use App\Notifications\TrialEndingNotification;
 use Illuminate\Foundation\Inspiring;
@@ -20,6 +21,9 @@ Schedule::call(function (): void {
         ->whereBetween('trial_ends_at', [now()->addDays(2)->startOfDay(), now()->addDays(2)->endOfDay()])
         ->each(fn (User $user) => $user->notify(new TrialEndingNotification));
 })->daily()->name('trial-ending-reminders');
+
+// Send weekly digest to users with unread notifications
+Schedule::job(new SendWeeklyDigestJob)->weekly()->sundays()->at('08:00')->name('weekly-digest');
 
 // Downgrade users whose trial ended yesterday
 Schedule::call(function (): void {

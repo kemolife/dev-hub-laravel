@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Events\CommentPosted;
+use App\Listeners\SendNewCommentNotifications;
 use App\Models\Comment;
 use App\Models\Post;
 use App\Models\User;
@@ -14,6 +16,7 @@ use Carbon\CarbonImmutable;
 use Illuminate\Database\Events\QueryExecuted;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\ServiceProvider;
@@ -37,6 +40,7 @@ class AppServiceProvider extends ServiceProvider
         $this->configureDefaults();
         $this->configureGates();
         $this->configureObservers();
+        $this->configureListeners();
         $this->configureSlowQueryLogging();
     }
 
@@ -73,6 +77,11 @@ class AppServiceProvider extends ServiceProvider
     protected function configureObservers(): void
     {
         Post::observe(PostObserver::class);
+    }
+
+    protected function configureListeners(): void
+    {
+        Event::listen(CommentPosted::class, SendNewCommentNotifications::class);
     }
 
     /**

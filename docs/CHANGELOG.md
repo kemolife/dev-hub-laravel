@@ -16,6 +16,15 @@ Each entry should answer: **what changed** and **why it matters to the user**. I
 - Public tag listing and lookup via `GET /api/v1/tags` and `GET /api/v1/tags/{slug}`
 - `reactions_count` and `tags` fields now included in all post API responses
 - Full-text search endpoint (`GET /api/v1/search`) powered by Meilisearch via Laravel Scout. Supports filtering by author; empty queries return recent published posts. Search queries are tracked (with result count and optional user attribution) for analytics.
+- Multi-channel notifications: comment replies, mentions, and new-follower events delivered to in-app inbox and by email
+- Per-type, per-channel notification preferences — users can silence email for any notification type while keeping in-app alerts
+- Digest mode: opt into a weekly summary email instead of per-event emails (ADR-0022)
+- `GET /api/v1/notifications` — paginated list of a user's notifications
+- `POST /api/v1/notifications/{id}/read` — mark a single notification as read
+- `POST /api/v1/notifications/read-all` — mark all notifications as read
+- `DELETE /api/v1/notifications/{id}` — delete a notification
+- `GET /api/v1/notification-preferences` — list all preferences with defaults for unconfigured types
+- `PUT /api/v1/notification-preferences` — upsert preferences in bulk (ADR-0010)
 
 ### Changed
 - _
