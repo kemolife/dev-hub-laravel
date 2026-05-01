@@ -7,6 +7,7 @@ namespace App\Models;
 use App\Casts\MarkdownCast;
 use App\Enums\PostStatus;
 use App\Support\ReadingTime;
+use Carbon\CarbonImmutable;
 use Database\Factories\PostFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Builder;
@@ -16,11 +17,14 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
+use Laravel\Scout\Searchable;
 
 /**
  * @property PostStatus $status
  * @property int $reading_time_seconds
+ * @property Carbon|CarbonImmutable|null $published_at
  */
 #[Fillable([
     'user_id',
@@ -37,7 +41,7 @@ use Illuminate\Support\Str;
 class Post extends Model
 {
     /** @use HasFactory<PostFactory> */
-    use HasFactory, SoftDeletes;
+    use HasFactory, Searchable, SoftDeletes;
 
     public function getRouteKeyName(): string
     {
@@ -58,6 +62,35 @@ class Post extends Model
             'published_at' => 'datetime',
             'body_markdown' => MarkdownCast::class,
         ];
+    }
+
+    public function searchableAs(): string
+    {
+        return (config('scout.prefix') ?? '').'posts';
+    }
+
+    /** @return array<string, mixed> */
+    public function toSearchableArray(): array
+    {
+        $this->loadMissing('user');
+
+        return [
+            'id' => $this->id,
+            'public_id' => $this->public_id,
+            'title' => $this->title,
+            'slug' => $this->slug,
+            'excerpt' => $this->excerpt,
+            'body' => mb_substr($this->body_markdown ?? '', 0, 5000),
+            'author_username' => $this->user?->username,
+            'status' => $this->status->value,
+            'published_at' => $this->published_at?->timestamp,
+            'view_count' => $this->view_count,
+        ];
+    }
+
+    public function shouldBeSearchable(): bool
+    {
+        return $this->status === PostStatus::Published;
     }
 
     public function readingTime(): ReadingTime

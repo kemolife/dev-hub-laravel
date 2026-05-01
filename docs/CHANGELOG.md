@@ -11,7 +11,7 @@ Each entry should answer: **what changed** and **why it matters to the user**. I
 ## [Unreleased]
 
 ### Added
-- _(features in progress, move to a versioned section on release)_
+- Full-text search endpoint (`GET /api/v1/search`) powered by Meilisearch via Laravel Scout. Supports filtering by author; empty queries return recent published posts. Search queries are tracked (with result count and optional user attribution) for analytics.
 
 ### Changed
 - _

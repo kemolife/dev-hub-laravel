@@ -14,7 +14,7 @@ This folder contains every architecturally significant decision made in DevHub. 
 | 0006 | [Cache invalidation strategy](./0006-cache-invalidation.md) | Proposed | TBD |
 | 0007 | [Comment tree storage: adjacency list with materialized path](./0007-comment-tree-storage.md) | Accepted | 2026-05-15 |
 | 0008 | [Markdown rendering: render-on-save](./0008-markdown-render-strategy.md) | Proposed | TBD |
-| 0009 | [Search engine: Meilisearch](./0009-search-engine.md) | Proposed | TBD |
+| 0009 | [Search engine: Meilisearch via Scout](./0009-search-engine.md) | Accepted | 2026-05-01 |
 | 0010 | [Notification preference granularity](./0010-notification-preferences.md) | Proposed | TBD |
 | 0011 | [Real-time: Reverb over Pusher](./0011-realtime-reverb.md) | Proposed | TBD |
 | 0012 | [API versioning strategy](./0012-api-versioning.md) | Proposed | TBD |
