@@ -28,6 +28,8 @@ This folder contains every architecturally significant decision made in DevHub. 
 | 0020 | [Denormalized counters for reactions and post counts](./0020-denormalized-counters.md) | Accepted | 2026-05-01 |
 | 0021 | [Tag normalization strategy](./0021-tag-normalization.md) | Accepted | 2026-05-01 |
 | 0022 | [Weekly digest: scheduled job, not a separate queue](./0022-digest-implementation.md) | Accepted | 2026-05-01 |
+| 0023 | [Onboarding step storage: JSON column vs dedicated table](./0023-onboarding-storage-json-vs-table.md) | Accepted | 2026-05-01 |
+| 0024 | [Feature flag rollout strategy via Laravel Pennant](./0024-feature-flag-rollout-pennant.md) | Accepted | 2026-05-01 |
 
 ## Status Legend
 

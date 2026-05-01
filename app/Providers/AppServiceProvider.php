@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace App\Providers;
 
 use App\Events\CommentPosted;
+use App\Events\PostPublished;
 use App\Listeners\SendNewCommentNotifications;
+use App\Listeners\TrackOnboardingProgress;
 use App\Models\Comment;
 use App\Models\Post;
 use App\Models\User;
@@ -21,6 +23,7 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
+use Laravel\Pennant\Feature;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -41,6 +44,7 @@ class AppServiceProvider extends ServiceProvider
         $this->configureGates();
         $this->configureObservers();
         $this->configureListeners();
+        $this->configureFeatureFlags();
         $this->configureSlowQueryLogging();
     }
 
@@ -82,6 +86,16 @@ class AppServiceProvider extends ServiceProvider
     protected function configureListeners(): void
     {
         Event::listen(CommentPosted::class, SendNewCommentNotifications::class);
+        Event::listen(PostPublished::class, [TrackOnboardingProgress::class, 'handlePostPublished']);
+        Event::listen(CommentPosted::class, [TrackOnboardingProgress::class, 'handleCommentPosted']);
+    }
+
+    protected function configureFeatureFlags(): void
+    {
+        Feature::define('new-editor', fn (User $user): bool => false);
+        Feature::define('ai-summaries', fn (User $user): bool => false);
+        Feature::define('recommendations', fn (User $user): bool => true);
+        Feature::define('public-roadmap', fn (User $user): bool => true);
     }
 
     /**
