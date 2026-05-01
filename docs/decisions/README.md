@@ -33,6 +33,8 @@ This folder contains every architecturally significant decision made in DevHub. 
 | 0025 | [Broadcast payload strategy: minimal payload, frontend re-fetches](./0025-broadcast-payload-strategy.md) | Accepted | 2026-05-01 |
 | 0026 | [API versioning strategy: URL-based](./0026-api-versioning-strategy.md) | Accepted | 2026-05-01 |
 | 0027 | [Webhook signing format: HMAC-SHA256](./0027-webhook-signing-format.md) | Accepted | 2026-05-01 |
+| 0028 | [Custom audit log vs. spatie/laravel-activitylog](./0028-audit-log-custom-vs-activitylog.md) | Accepted | 2026-05-01 |
+| 0029 | [No admin impersonation in API-only context](./0029-no-admin-impersonation.md) | Accepted | 2026-05-01 |
 
 ## Status Legend
 

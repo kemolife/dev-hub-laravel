@@ -28,6 +28,10 @@ Each entry should answer: **what changed** and **why it matters to the user**. I
 - `DELETE /api/v1/notifications/{id}` — delete a notification
 - `GET /api/v1/notification-preferences` — list all preferences with defaults for unconfigured types
 - `PUT /api/v1/notification-preferences` — upsert preferences in bulk (ADR-0010)
+- Filament admin panel at `/admin` — accessible to Admin and Moderator roles only
+- Audit log: all admin actions are recorded in `audit_logs` with actor, action, before/after state, IP, and user agent
+- User suspension: admins can suspend users with an optional expiry; suspended users receive 403 on write operations
+- Reports: authenticated users can report posts or comments via `POST /api/v1/reports/{type}/{id}` (rate-limited to 5 per hour)
 
 ### Changed
 - _
