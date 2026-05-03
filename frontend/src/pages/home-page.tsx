@@ -9,7 +9,7 @@ import { NewsletterWidget } from '../features/feed/newsletter-widget';
 import { PostCard } from '../features/feed/post-card';
 import { TrendingSidebar } from '../features/feed/trending-sidebar';
 import { api } from '../lib/api';
-import type { ApiPost, ApiTag, Pagination } from '../types';
+import type { ApiPost, ApiTag } from '../types';
 
 const NAV_LINKS = [
   { label: 'Home', to: '/' },
@@ -46,8 +46,8 @@ export function HomePage() {
 
   useEffect(() => {
     api
-      .get<Pagination<ApiPost>>('/posts?page=1&per_page=15')
-      .then((result) => setPosts(result.data))
+      .get<ApiPost[]>('/posts?page=1&per_page=15')
+      .then((result) => setPosts(result))
       .catch(() => setPosts([]))
       .finally(() => setIsLoadingPosts(false));
 

@@ -35,8 +35,8 @@ export function FeedPage() {
 
     setIsLoading(true);
     api
-      .get<{ data: ApiPost[] }>('/feed', token)
-      .then((res) => setPosts(res.data))
+      .get<ApiPost[]>('/feed', token)
+      .then((res) => setPosts(res))
       .catch(() => setPosts([]))
       .finally(() => setIsLoading(false));
   }, [token]);

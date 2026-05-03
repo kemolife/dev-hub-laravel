@@ -202,8 +202,8 @@ export function ProfilePage() {
       .finally(() => setIsLoadingProfile(false));
 
     api
-      .get<{ data: ApiPost[] }>(`/posts?author=${username}`, token ?? undefined)
-      .then((res) => setPosts(res.data))
+      .get<ApiPost[]>(`/posts?author=${username}`, token ?? undefined)
+      .then((res) => setPosts(res))
       .catch(() => setPosts([]))
       .finally(() => setIsLoadingPosts(false));
   }, [username, token]);
@@ -212,16 +212,16 @@ export function ProfilePage() {
     if (activeTab === 'followers' && username && followers.length === 0) {
       setIsLoadingFollowers(true);
       api
-        .get<{ data: UserSummary[] }>(`/users/${username}/followers`, token ?? undefined)
-        .then((res) => setFollowers(res.data))
+        .get<UserSummary[]>(`/users/${username}/followers`, token ?? undefined)
+        .then((res) => setFollowers(res))
         .catch(() => setFollowers([]))
         .finally(() => setIsLoadingFollowers(false));
     }
     if (activeTab === 'following' && username && following.length === 0) {
       setIsLoadingFollowing(true);
       api
-        .get<{ data: UserSummary[] }>(`/users/${username}/following`, token ?? undefined)
-        .then((res) => setFollowing(res.data))
+        .get<UserSummary[]>(`/users/${username}/following`, token ?? undefined)
+        .then((res) => setFollowing(res))
         .catch(() => setFollowing([]))
         .finally(() => setIsLoadingFollowing(false));
     }
