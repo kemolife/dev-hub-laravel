@@ -54,10 +54,10 @@ function applyAction(view: EditorView, action: ToolbarAction): void {
       wrap('## ', '', 'Heading');
       break;
     case 'link':
-      wrap('[', '](url)', selected || 'link text');
+      wrap('[', '](url)', 'link text');
       break;
     case 'image':
-      wrap('![', '](url)', selected || 'alt text');
+      wrap('![', '](url)', 'alt text');
       break;
   }
 }
