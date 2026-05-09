@@ -3,7 +3,6 @@ import { EditorView, keymap } from '@codemirror/view';
 import { EditorState } from '@codemirror/state';
 import { markdown, markdownLanguage } from '@codemirror/lang-markdown';
 import { languages } from '@codemirror/language-data';
-import { oneDark } from '@codemirror/theme-one-dark';
 import { defaultKeymap, history, historyKeymap } from '@codemirror/commands';
 import { EditorToolbar } from './editor-toolbar';
 import { PreviewRenderer } from './preview-renderer';
@@ -37,7 +36,6 @@ export function MarkdownEditor({
       doc: value,
       extensions: [
         markdown({ base: markdownLanguage, codeLanguages: languages }),
-        oneDark,
         history(),
         EditorView.lineWrapping,
         keymap.of([...defaultKeymap, ...historyKeymap]),
@@ -47,11 +45,19 @@ export function MarkdownEditor({
           }
         }),
         EditorView.theme({
-          '&': { fontSize: '16px', fontFamily: 'var(--font-mono, monospace)' },
-          '.cm-content': { padding: '16px 0', minHeight: '400px' },
+          '&': {
+            fontSize: '16px',
+            fontFamily: 'var(--font-mono, monospace)',
+            height: 'calc(100vh - 280px)',
+          },
+          '.cm-scroller': { overflow: 'auto' },
+          '.cm-content': { padding: '16px 0', minHeight: '100%' },
           '.cm-focused': { outline: 'none' },
-          '.cm-editor': { backgroundColor: 'var(--color-bg-primary)' },
+          '&, .cm-editor': { backgroundColor: 'var(--color-bg-primary)' },
+          '.cm-gutters': { backgroundColor: 'var(--color-bg-primary)', border: 'none' },
           '&.cm-focused .cm-cursor': { borderLeftColor: 'var(--color-text-primary)' },
+          '.cm-activeLine': { backgroundColor: 'transparent' },
+          '.cm-selectionBackground, ::selection': { backgroundColor: 'rgba(100,149,237,0.2)' },
         }),
       ],
     });
@@ -79,7 +85,7 @@ export function MarkdownEditor({
   }, [value]);
 
   return (
-    <div style={{ backgroundColor: 'var(--color-bg-primary)', minHeight: 520 }}>
+    <div style={{ backgroundColor: 'var(--color-bg-primary)' }}>
       {/* Title + subtitle always visible */}
       <div style={{ padding: '32px 48px 0' }}>
         <input
