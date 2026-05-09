@@ -2,6 +2,7 @@ import { Navigate, useLocation } from 'react-router';
 import { createBrowserRouter } from 'react-router';
 import { useAuth } from './features/auth/auth-context';
 import { BillingPage } from './pages/billing-page';
+import { DraftsPage } from './pages/drafts-page';
 import { EditorPage } from './pages/editor-page';
 import { FeedPage } from './pages/feed-page';
 import { HomePage } from './pages/home-page';
@@ -40,6 +41,14 @@ export const router = createBrowserRouter([
     element: (
       <RequireAuth>
         <EditorPage />
+      </RequireAuth>
+    ),
+  },
+  {
+    path: '/drafts',
+    element: (
+      <RequireAuth>
+        <DraftsPage />
       </RequireAuth>
     ),
   },

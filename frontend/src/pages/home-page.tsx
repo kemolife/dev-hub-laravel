@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, NavLink } from 'react-router';
 import { Avatar } from '../components/ui/avatar';
 import { Button } from '../components/ui/button';
@@ -43,6 +43,18 @@ export function HomePage() {
   const [posts, setPosts] = useState<ApiPost[]>([]);
   const [tags, setTags] = useState<ApiTag[]>([]);
   const [isLoadingPosts, setIsLoadingPosts] = useState(true);
+  const [writeMenuOpen, setWriteMenuOpen] = useState(false);
+  const writeMenuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (writeMenuRef.current && !writeMenuRef.current.contains(e.target as Node)) {
+        setWriteMenuOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClick);
+    return () => document.removeEventListener('mousedown', handleClick);
+  }, []);
 
   useEffect(() => {
     api
@@ -112,6 +124,54 @@ export function HomePage() {
             />
             {user ? (
               <div className="flex items-center gap-2">
+                <div ref={writeMenuRef} style={{ position: 'relative' }}>
+                  <Button variant="primary" onClick={() => setWriteMenuOpen((o) => !o)}>
+                    Write ▾
+                  </Button>
+                  {writeMenuOpen && (
+                    <div
+                      style={{
+                        position: 'absolute',
+                        top: 'calc(100% + 6px)',
+                        right: 0,
+                        width: 160,
+                        backgroundColor: 'var(--color-bg-primary)',
+                        border: '0.5px solid var(--color-border-tertiary)',
+                        borderRadius: 'var(--radius-md)',
+                        boxShadow: '0 4px 16px rgba(0,0,0,0.12)',
+                        zIndex: 50,
+                        overflow: 'hidden',
+                      }}
+                    >
+                      {[
+                        { label: 'New post', to: '/editor' },
+                        { label: 'My drafts', to: '/drafts' },
+                      ].map(({ label, to }) => (
+                        <Link
+                          key={to}
+                          to={to}
+                          onClick={() => setWriteMenuOpen(false)}
+                          style={{
+                            display: 'block',
+                            padding: '10px 14px',
+                            fontSize: 14,
+                            color: 'var(--color-text-primary)',
+                            textDecoration: 'none',
+                          }}
+                          onMouseEnter={(e) => {
+                            (e.currentTarget as HTMLAnchorElement).style.backgroundColor =
+                              'var(--color-bg-secondary)';
+                          }}
+                          onMouseLeave={(e) => {
+                            (e.currentTarget as HTMLAnchorElement).style.backgroundColor = 'transparent';
+                          }}
+                        >
+                          {label}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </div>
                 <NotificationBell />
                 <Link
                   to="/settings/billing"
