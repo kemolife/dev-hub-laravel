@@ -21,6 +21,7 @@ use App\Http\Controllers\Api\V1\TagController;
 use App\Http\Controllers\Api\V1\TokenController;
 use App\Http\Controllers\Api\V1\TwoFactorController;
 use App\Http\Controllers\Api\V1\UserController;
+use App\Http\Controllers\Api\V1\UserPostController;
 use App\Http\Controllers\Api\V1\WebhookEndpointController;
 use App\Http\Middleware\CheckNotSuspended;
 use App\Http\Middleware\UpdateLastSeenAt;
@@ -52,6 +53,7 @@ Route::get('/users/{user:username}/following', [FollowController::class, 'follow
 Route::middleware(['auth:sanctum', UpdateLastSeenAt::class])->group(function (): void {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/me', [UserController::class, 'me']);
+    Route::get('/me/posts', [UserPostController::class, 'index']);
 
     Route::get('/tokens', [TokenController::class, 'index']);
     Route::post('/tokens', [TokenController::class, 'store']);
