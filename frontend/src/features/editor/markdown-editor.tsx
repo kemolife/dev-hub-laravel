@@ -4,8 +4,16 @@ import { EditorState } from '@codemirror/state';
 import { markdown, markdownLanguage } from '@codemirror/lang-markdown';
 import { languages } from '@codemirror/language-data';
 import { defaultKeymap, history, historyKeymap } from '@codemirror/commands';
+import { HighlightStyle, syntaxHighlighting, defaultHighlightStyle } from '@codemirror/language';
+import { tags } from '@lezer/highlight';
 import { EditorToolbar } from './editor-toolbar';
 import { PreviewRenderer } from './preview-renderer';
+
+// Inline code gets a pill background; fenced block content uses GitHub-light syntax colors.
+const codeStyle = HighlightStyle.define([
+  { tag: tags.monospace, backgroundColor: 'rgba(175,184,193,0.25)', padding: '1px 5px', borderRadius: '4px' },
+  { tag: tags.processingInstruction, color: '#6e7781' },
+]);
 
 interface MarkdownEditorProps {
   title: string;
@@ -29,6 +37,7 @@ export function MarkdownEditor({
   const editorRef = useRef<HTMLDivElement>(null);
   const viewRef = useRef<EditorView | null>(null);
 
+
   useEffect(() => {
     if (!editorRef.current) return;
 
@@ -36,6 +45,8 @@ export function MarkdownEditor({
       doc: value,
       extensions: [
         markdown({ base: markdownLanguage, codeLanguages: languages }),
+        syntaxHighlighting(defaultHighlightStyle, { fallback: true }),
+        syntaxHighlighting(codeStyle),
         history(),
         EditorView.lineWrapping,
         keymap.of([...defaultKeymap, ...historyKeymap]),
