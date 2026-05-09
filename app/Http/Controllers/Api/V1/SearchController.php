@@ -30,7 +30,7 @@ class SearchController extends Controller
             return PostResource::collection($posts);
         }
 
-        $search = Post::search($data->query);
+        $search = Post::search($data->query)->query(fn ($q) => $q->with('user', 'tags'));
 
         if ($data->author !== null) {
             $search->where('author_username', $data->author);

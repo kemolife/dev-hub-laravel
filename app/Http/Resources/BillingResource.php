@@ -12,22 +12,40 @@ use Illuminate\Http\Resources\Json\JsonResource;
 /** @property User $resource */
 class BillingResource extends JsonResource
 {
+    private function resolvePlanFromSubscription(?string $stripePriceId): string
+    {
+        if ($stripePriceId === null) {
+            return 'free';
+        }
+
+        foreach (['pro', 'pro_annual'] as $key) {
+            if (config("plans.{$key}.stripe_price_id") === $stripePriceId) {
+                return $key;
+            }
+        }
+
+        return 'free';
+    }
+
     /** @return array<string, mixed> */
     public function toArray(Request $request): array
     {
         $user = $this->resource;
         $limits = PlanLimits::for($user);
 
-        /** @var array<string, mixed>|null $planConfig */
-        $planConfig = config("plans.{$user->plan}", config('plans.free'));
+        $subscription = $user->subscription();
+
+        $plan = $this->resolvePlanFromSubscription($subscription?->stripe_price);
 
         return [
-            'plan' => $user->plan ?? 'free',
-            'plan_name' => $planConfig['name'] ?? 'Free',
+            'plan' => $plan,
+            'status' => $subscription?->stripe_status,
             'trial_ends_at' => $user->trial_ends_at?->toIso8601String(),
-            'on_trial' => $user->trial_ends_at !== null && $user->trial_ends_at->isFuture(),
-            'subscribed' => $user->subscribed(),
-            'subscription_status' => $user->subscription()?->stripe_status,
+            'renews_at' => $subscription?->asStripeSubscription()->current_period_end
+                ? date('c', $subscription->asStripeSubscription()->current_period_end)
+                : null,
+            'cancelled_at' => $subscription?->ends_at?->toIso8601String(),
+            'ends_at' => $subscription?->ends_at?->toIso8601String(),
             'limits' => [
                 'posts_per_month' => $limits->postsPerMonth(),
                 'api_access' => $limits->hasApiAccess(),

@@ -1,3 +1,4 @@
+import { Link } from 'react-router';
 import { Avatar } from '../../components/ui/avatar';
 import { Tag } from '../../components/ui/tag';
 import { relativeTime } from '../../lib/utils';
@@ -47,12 +48,20 @@ export function PostHeader({ post }: PostHeaderProps) {
         className="flex items-center gap-3 pb-6"
         style={{ borderBottom: '0.5px solid var(--color-border-tertiary)', marginBottom: 32 }}
       >
-        <Avatar
-          initials={authorInitials(post.author.name)}
-          size="lg"
-        />
+        <Link to={`/u/${post.author.username}`} className="no-underline" style={{ display: 'inline-block' }}>
+          <Avatar
+            initials={authorInitials(post.author.name)}
+            size="lg"
+          />
+        </Link>
         <div>
-          <p className="m-0 text-sm font-medium">{post.author.name}</p>
+          <Link
+            to={`/u/${post.author.username}`}
+            className="no-underline"
+            style={{ color: 'inherit' }}
+          >
+            <p className="m-0 text-sm font-medium">{post.author.name}</p>
+          </Link>
           <p className="m-0 text-[13px]" style={{ color: 'var(--color-text-secondary)' }}>
             Published {relativeTime(publishedDate)} · {post.reading_time_minutes} min read
           </p>

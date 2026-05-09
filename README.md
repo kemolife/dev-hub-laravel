@@ -30,6 +30,7 @@ git clone git@github.com:vitalii/devhub.git
 cd devhub
 cp .env.example .env
 composer install && npm install
+php artisan sail:install --no-interaction --with=pgsql,redis,meilisearch,mailpit --php=8.4
 ./vendor/bin/sail up -d
 sail artisan key:generate
 sail artisan migrate --seed

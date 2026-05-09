@@ -19,6 +19,7 @@ class PostController extends Controller
     {
         $posts = Post::published()
             ->with('user', 'tags')
+            ->withCount('comments')
             ->latest()
             ->paginate();
 
@@ -33,6 +34,11 @@ class PostController extends Controller
         $this->authorize('view', $post);
 
         $post->loadMissing('user', 'tags');
+        $post->loadCount('comments');
+
+        if ($request->user()) {
+            $post->is_bookmarked = $post->bookmarks()->where('user_id', $request->user()->id)->exists();
+        }
 
         $viewerKey = $request->user()?->id
             ? (string) $request->user()->id

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Link, NavLink } from 'react-router';
+import { Link, NavLink, useNavigate } from 'react-router';
 import { Avatar } from '../components/ui/avatar';
 import { Button } from '../components/ui/button';
 import { Topbar } from '../components/layout/topbar';
@@ -40,6 +40,7 @@ function PostCardSkeleton() {
 
 export function HomePage() {
   const { user, logout } = useAuth();
+  const navigate = useNavigate();
   const [posts, setPosts] = useState<ApiPost[]>([]);
   const [tags, setTags] = useState<ApiTag[]>([]);
   const [isLoadingPosts, setIsLoadingPosts] = useState(true);
@@ -121,6 +122,12 @@ export function HomePage() {
                 border: '0.5px solid var(--color-border-tertiary)',
                 backgroundColor: 'var(--color-bg-primary)',
               }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  const q = (e.currentTarget as HTMLInputElement).value.trim();
+                  void navigate(q ? `/search?q=${encodeURIComponent(q)}` : '/search');
+                }
+              }}
             />
             {user ? (
               <div className="flex items-center gap-2">
@@ -183,15 +190,17 @@ export function HomePage() {
                 >
                   Billing
                 </Link>
-                <Avatar
-                  initials={user.name
-                    .split(' ')
-                    .map((n) => n[0])
-                    .join('')
-                    .slice(0, 2)
-                    .toUpperCase()}
-                  size="md"
-                />
+                <Link to={`/u/${user.username}`} style={{ display: 'flex' }}>
+                  <Avatar
+                    initials={user.name
+                      .split(' ')
+                      .map((n) => n[0])
+                      .join('')
+                      .slice(0, 2)
+                      .toUpperCase()}
+                    size="md"
+                  />
+                </Link>
                 <button
                   onClick={() => logout()}
                   style={{

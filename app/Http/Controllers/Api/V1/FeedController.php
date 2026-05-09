@@ -20,6 +20,7 @@ class FeedController extends Controller
 
         $posts = Post::published()
             ->with(['user', 'tags'])
+            ->withCount('comments')
             ->whereIn('user_id', $followingIds)
             ->latest('published_at')
             ->paginate(15);

@@ -23,6 +23,8 @@ export interface ApiPost {
   status: 'draft' | 'published' | 'archived';
   reading_time_minutes: number;
   reactions_count: Record<string, number>;
+  comments_count: number;
+  is_bookmarked?: boolean;
   tags: ApiTag[];
   author: ApiAuthor;
   published_at: string | null;
@@ -131,6 +133,7 @@ export interface ApiUser {
   website_url: string | null;
   followers_count: number;
   following_count: number;
+  is_following: boolean;
   created_at: string;
 }
 

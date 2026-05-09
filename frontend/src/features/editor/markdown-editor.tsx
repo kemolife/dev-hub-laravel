@@ -24,22 +24,59 @@ function matchCodeLanguage(info: string): LanguageDescription | null {
 }
 
 const blockLineMark = Decoration.line({ class: 'cm-fenced-block' });
+const fenceHideMark = Decoration.line({ class: 'cm-fence-hidden' });
 
 function buildCodeBlockDecorations(view: EditorView): DecorationSet {
   const builder = new RangeSetBuilder<Decoration>();
-  syntaxTree(view.state).iterate({
+  const { state } = view;
+  const cursorLineNum = state.doc.lineAt(state.selection.main.head).number;
+
+  syntaxTree(state).iterate({
     from: view.viewport.from,
     to: view.viewport.to,
     enter(node) {
-      if (node.name === 'CodeText') {
-        const from = view.state.doc.lineAt(node.from);
-        const to = view.state.doc.lineAt(node.to);
-        for (let n = from.number; n <= to.number; n++) {
-          const line = view.state.doc.line(n);
+      if (node.name !== 'FencedCode') return;
+
+      const cursor = node.node.cursor();
+      if (!cursor.firstChild()) return false;
+
+      const marks: Array<number> = [];
+      let codeText: { from: number; to: number } | null = null;
+
+      do {
+        if (cursor.name === 'CodeMark') {
+          marks.push(cursor.from);
+        } else if (cursor.name === 'CodeText') {
+          codeText = { from: cursor.from, to: cursor.to };
+        }
+      } while (cursor.nextSibling());
+
+      const [openFrom, closeFrom] = marks;
+
+      if (openFrom !== undefined) {
+        const openLine = state.doc.lineAt(openFrom);
+        if (cursorLineNum !== openLine.number) {
+          builder.add(openLine.from, openLine.from, fenceHideMark);
+        }
+      }
+
+      if (codeText) {
+        const fromLine = state.doc.lineAt(codeText.from);
+        const toLine = state.doc.lineAt(codeText.to);
+        for (let n = fromLine.number; n <= toLine.number; n++) {
+          const line = state.doc.line(n);
           builder.add(line.from, line.from, blockLineMark);
         }
-        return false;
       }
+
+      if (closeFrom !== undefined) {
+        const closeLine = state.doc.lineAt(closeFrom);
+        if (cursorLineNum !== closeLine.number) {
+          builder.add(closeLine.from, closeLine.from, fenceHideMark);
+        }
+      }
+
+      return false;
     },
   });
   return builder.finish();
@@ -50,7 +87,7 @@ const codeBlockHighlighter = ViewPlugin.fromClass(
     decorations: DecorationSet;
     constructor(view: EditorView) { this.decorations = buildCodeBlockDecorations(view); }
     update(update: ViewUpdate) {
-      if (update.docChanged || update.viewportChanged) {
+      if (update.docChanged || update.viewportChanged || update.selectionSet) {
         this.decorations = buildCodeBlockDecorations(update.view);
       }
     }
@@ -113,6 +150,7 @@ export function MarkdownEditor({
           '&.cm-focused .cm-cursor': { borderLeftColor: 'var(--color-text-primary)' },
           '.cm-activeLine': { backgroundColor: 'transparent' },
           '.cm-fenced-block': { backgroundColor: 'rgba(175,184,193,0.15)', display: 'block' },
+          '.cm-fence-hidden': { display: 'none' },
           '.cm-selectionBackground, ::selection': { backgroundColor: 'rgba(100,149,237,0.2)' },
         }),
       ],

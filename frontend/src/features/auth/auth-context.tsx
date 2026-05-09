@@ -18,6 +18,7 @@ interface AuthContextValue extends AuthState {
   login(email: string, password: string, deviceName?: string): Promise<LoginResult>;
   register(
     name: string,
+    username: string,
     email: string,
     password: string,
     passwordConfirmation: string,
@@ -89,9 +90,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   );
 
   const register = useCallback(
-    async (name: string, email: string, password: string, passwordConfirmation: string) => {
+    async (name: string, username: string, email: string, password: string, passwordConfirmation: string) => {
       const data = await api.post<TokenResponse>('/register', {
         name,
+        username,
         email,
         password,
         password_confirmation: passwordConfirmation,

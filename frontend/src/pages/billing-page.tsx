@@ -194,6 +194,20 @@ export function BillingPage() {
     }
   }
 
+  async function handleDownloadInvoice(downloadUrl: string, invoiceId: string) {
+    if (!token) return;
+    const response = await fetch(downloadUrl, {
+      headers: { Authorization: `Bearer ${token}`, Accept: 'application/pdf' },
+    });
+    const blob = await response.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `invoice-${invoiceId}.pdf`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
   const isFree = billing?.plan === 'free' || !billing?.plan;
   const isPaid = !isFree;
   const isActive = billing?.status === 'active' || billing?.status === 'trialing';
@@ -242,15 +256,17 @@ export function BillingPage() {
                 >
                   Billing
                 </Link>
-                <Avatar
-                  initials={user.name
-                    .split(' ')
-                    .map((n) => n[0])
-                    .join('')
-                    .slice(0, 2)
-                    .toUpperCase()}
-                  size="md"
-                />
+                <Link to={`/u/${user.username}`} style={{ display: 'flex' }}>
+                  <Avatar
+                    initials={user.name
+                      .split(' ')
+                      .map((n) => n[0])
+                      .join('')
+                      .slice(0, 2)
+                      .toUpperCase()}
+                    size="md"
+                  />
+                </Link>
                 <button
                   onClick={() => logout()}
                   style={{
@@ -358,7 +374,8 @@ export function BillingPage() {
           ) : null}
         </section>
 
-        {/* Plan options */}
+        {/* Plan options — hidden when on annual plan */}
+        {billing?.plan !== 'pro_annual' && (
         <section
           style={{
             backgroundColor: 'var(--color-bg-primary)',
@@ -378,12 +395,12 @@ export function BillingPage() {
               margin: '0 0 14px',
             }}
           >
-            {isFree ? 'Upgrade your plan' : 'Available plans'}
+            {isFree ? 'Upgrade your plan' : 'Upgrade to annual'}
           </h2>
 
           <div className="flex gap-4" style={{ flexWrap: 'wrap' }}>
-            {/* Pro Monthly */}
-            <div
+            {/* Pro Monthly — hidden when already on monthly */}
+            {billing?.plan !== 'pro' && <div
               style={{
                 flex: '1 1 220px',
                 borderRadius: 'var(--radius-lg)',
@@ -444,7 +461,7 @@ export function BillingPage() {
                     ? 'Redirecting…'
                     : 'Upgrade'}
               </Button>
-            </div>
+            </div>}
 
             {/* Pro Annual */}
             <div
@@ -528,6 +545,7 @@ export function BillingPage() {
             </div>
           </div>
         </section>
+        )}
 
         {/* Actions */}
         {isPaid && (
@@ -666,18 +684,20 @@ export function BillingPage() {
                       </span>
                     </td>
                     <td style={{ padding: '10px 0', textAlign: 'right' }}>
-                      <a
-                        href={invoice.download_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
+                      <button
+                        onClick={() => void handleDownloadInvoice(invoice.download_url, invoice.id)}
                         style={{
+                          background: 'none',
+                          border: 'none',
+                          cursor: 'pointer',
                           fontSize: 12,
                           color: 'var(--color-text-secondary)',
                           textDecoration: 'underline',
+                          padding: 0,
                         }}
                       >
                         Download
-                      </a>
+                      </button>
                     </td>
                   </tr>
                 ))}

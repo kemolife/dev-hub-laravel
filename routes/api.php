@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\BillingController;
+use App\Http\Controllers\Api\V1\BookmarkController;
 use App\Http\Controllers\Api\V1\CommentController;
 use App\Http\Controllers\Api\V1\FeatureFlagController;
 use App\Http\Controllers\Api\V1\FeedbackController;
@@ -47,6 +48,7 @@ Route::get('/tags/{tag:slug}', [TagController::class, 'show']);
 Route::get('/features', FeatureFlagController::class);
 Route::post('/feedback', [FeedbackController::class, 'store']);
 
+Route::get('/users/{user:username}', [UserController::class, 'show']);
 Route::get('/users/{user:username}/followers', [FollowController::class, 'followers']);
 Route::get('/users/{user:username}/following', [FollowController::class, 'following']);
 
@@ -54,6 +56,8 @@ Route::middleware(['auth:sanctum', UpdateLastSeenAt::class])->group(function ():
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/me', [UserController::class, 'me']);
     Route::get('/me/posts', [UserPostController::class, 'index']);
+    Route::get('/me/bookmarks', [BookmarkController::class, 'index']);
+    Route::post('/posts/{post:slug}/bookmark', [BookmarkController::class, 'toggle']);
 
     Route::get('/tokens', [TokenController::class, 'index']);
     Route::post('/tokens', [TokenController::class, 'store']);
@@ -101,4 +105,5 @@ Route::middleware(['auth:sanctum', UpdateLastSeenAt::class])->group(function ():
     Route::post('/billing/cancel', [BillingController::class, 'cancel'])->name('billing.cancel');
     Route::post('/billing/resume', [BillingController::class, 'resume'])->name('billing.resume');
     Route::get('/billing/invoices', [BillingController::class, 'invoices'])->name('billing.invoices');
+    Route::get('/billing/invoices/{invoiceId}/download', [BillingController::class, 'downloadInvoice'])->name('billing.invoices.download');
 });

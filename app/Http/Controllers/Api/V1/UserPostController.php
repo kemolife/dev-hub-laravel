@@ -20,6 +20,7 @@ class UserPostController extends Controller
             ->posts()
             ->when($status, fn ($q) => $q->where('status', $status))
             ->with('user', 'tags')
+            ->withCount('comments')
             ->latest('updated_at')
             ->latest('id')
             ->paginate();

@@ -8,6 +8,7 @@ use App\Events\CommentPosted;
 use App\Events\PostPublished;
 use App\Listeners\DispatchWebhooksForEvent;
 use App\Listeners\SendNewCommentNotifications;
+use App\Listeners\SyncUserPlanOnSubscriptionChange;
 use App\Listeners\TrackOnboardingProgress;
 use App\Models\Comment;
 use App\Models\Post;
@@ -27,6 +28,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
+use Laravel\Cashier\Events\WebhookHandled;
 use Laravel\Pennant\Feature;
 
 class AppServiceProvider extends ServiceProvider
@@ -94,6 +96,7 @@ class AppServiceProvider extends ServiceProvider
         Event::listen(PostPublished::class, [TrackOnboardingProgress::class, 'handlePostPublished']);
         Event::listen(CommentPosted::class, [TrackOnboardingProgress::class, 'handleCommentPosted']);
         Event::listen([PostPublished::class, CommentPosted::class], DispatchWebhooksForEvent::class);
+        Event::listen(WebhookHandled::class, SyncUserPlanOnSubscriptionChange::class);
     }
 
     protected function configureFeatureFlags(): void

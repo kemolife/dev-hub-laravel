@@ -32,13 +32,19 @@ export function PostCard({ post }: PostCardProps) {
         className="flex items-center gap-2.5 mb-2.5 text-[13px]"
         style={{ color: 'var(--color-text-secondary)' }}
       >
-        <Avatar
-          initials={authorInitials(post.author.name)}
-          size="sm"
-        />
-        <span style={{ color: 'var(--color-text-primary)', fontWeight: 500 }}>
+        <Link to={`/u/${post.author.username}`} className="no-underline" style={{ display: 'inline-block' }}>
+          <Avatar
+            initials={authorInitials(post.author.name)}
+            size="sm"
+          />
+        </Link>
+        <Link
+          to={`/u/${post.author.username}`}
+          className="no-underline"
+          style={{ color: 'var(--color-text-primary)', fontWeight: 500 }}
+        >
           {post.author.name}
-        </span>
+        </Link>
         <span>·</span>
         <span>{relativeTime(publishedDate)}</span>
         <span>·</span>
@@ -65,10 +71,22 @@ export function PostCard({ post }: PostCardProps) {
         {post.excerpt}
       </p>
 
-      <div className="flex gap-1.5 flex-wrap">
-        {post.tags.map((tag) => (
-          <Tag key={tag.id}>{tag.name}</Tag>
-        ))}
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex gap-1.5 flex-wrap">
+          {post.tags.map((tag) => (
+            <Tag key={tag.id}>{tag.name}</Tag>
+          ))}
+        </div>
+        <Link
+          to={`/posts/${post.slug}#comments`}
+          className="flex items-center gap-1 no-underline shrink-0"
+          style={{ fontSize: 13, color: 'var(--color-text-tertiary)' }}
+        >
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+            <path d="M14 10.5a1.5 1.5 0 0 1-1.5 1.5H4.5L2 14.5V3a1.5 1.5 0 0 1 1.5-1.5h9A1.5 1.5 0 0 1 14 3v7.5Z" strokeLinejoin="round"/>
+          </svg>
+          {post.comments_count}
+        </Link>
       </div>
     </article>
   );

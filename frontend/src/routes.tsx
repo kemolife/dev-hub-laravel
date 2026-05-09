@@ -2,6 +2,7 @@ import { Navigate, useLocation } from 'react-router';
 import { createBrowserRouter } from 'react-router';
 import { useAuth } from './features/auth/auth-context';
 import { BillingPage } from './pages/billing-page';
+import { BookmarksPage } from './pages/bookmarks-page';
 import { DraftsPage } from './pages/drafts-page';
 import { EditorPage } from './pages/editor-page';
 import { FeedPage } from './pages/feed-page';
@@ -103,6 +104,18 @@ export const router = createBrowserRouter([
   {
     path: '/tags/:slug',
     element: <TagDetailPage />,
+  },
+  {
+    path: '/bookmarks',
+    element: (
+      <RequireAuth>
+        <BookmarksPage />
+      </RequireAuth>
+    ),
+  },
+  {
+    path: '/settings',
+    element: <Navigate to="/settings/billing" replace />,
   },
   {
     path: '/settings/billing',

@@ -197,6 +197,7 @@ export function ProfilePage() {
       .then((u) => {
         setProfileUser(u);
         setFollowersCount(u.followers_count);
+        setIsFollowing(u.is_following);
       })
       .catch(() => setNotFound(true))
       .finally(() => setIsLoadingProfile(false));

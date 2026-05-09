@@ -10,6 +10,7 @@ export function RegisterPage() {
   const navigate = useNavigate();
 
   const [name, setName] = useState('');
+  const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [passwordConfirmation, setPasswordConfirmation] = useState('');
@@ -22,7 +23,7 @@ export function RegisterPage() {
     setIsSubmitting(true);
 
     try {
-      await register(name, email, password, passwordConfirmation);
+      await register(name, username, email, password, passwordConfirmation);
       navigate('/', { replace: true });
     } catch (err) {
       if (err instanceof ApiError) {
@@ -105,6 +106,16 @@ export function RegisterPage() {
             onChange={(e) => setName(e.target.value)}
             error={errors.name}
             autoComplete="name"
+            required
+          />
+          <Input
+            id="username"
+            label="Username"
+            type="text"
+            value={username}
+            onChange={(e) => setUsername(e.target.value.toLowerCase().replace(/[^a-z0-9_-]/g, ''))}
+            error={errors.username}
+            autoComplete="username"
             required
           />
           <Input

@@ -99,7 +99,7 @@ export function CommentsSection({ postSlug, token }: CommentsSectionProps) {
     try {
       const created = await api.post<ApiComment>(
         `/posts/${postSlug}/comments`,
-        { body: newBody.trim() },
+        { body_markdown: newBody.trim() },
         token,
       );
       setComments((prev) => prev.map((c) => (c.id === tempId ? created : c)));
@@ -122,7 +122,7 @@ export function CommentsSection({ postSlug, token }: CommentsSectionProps) {
     try {
       const created = await api.post<ApiComment>(
         `/posts/${postSlug}/comments`,
-        { body: bodySnapshot, parent_id: replyToId },
+        { body_markdown: bodySnapshot, parent_id: replyToId },
         token,
       );
 
@@ -141,7 +141,7 @@ export function CommentsSection({ postSlug, token }: CommentsSectionProps) {
       if (!token) return;
       const updated = await api.put<ApiComment>(
         `/posts/${postSlug}/comments/${commentId}`,
-        { body: newBodyText },
+        { body_markdown: newBodyText },
         token,
       );
       setComments((prev) => updateCommentInTree(prev, updated));

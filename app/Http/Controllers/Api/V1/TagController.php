@@ -21,6 +21,9 @@ class TagController extends Controller
 
     public function show(Request $request, Tag $tag): TagResource
     {
+        $tag->loadCount('posts');
+        $tag->load(['posts' => fn ($q) => $q->published()->with('user', 'tags')->withCount('comments')->latest('published_at')]);
+
         return new TagResource($tag);
     }
 }

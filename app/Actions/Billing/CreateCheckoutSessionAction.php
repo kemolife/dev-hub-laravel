@@ -25,11 +25,13 @@ class CreateCheckoutSessionAction
             throw new InvalidArgumentException("Plan '{$planKey}' has no Stripe price ID configured.");
         }
 
+        $frontendUrl = config('app.frontend_url', config('app.url'));
+
         /** @var Checkout $checkout */
         $checkout = $user->newSubscription('default', $stripePriceId)
             ->checkout([
-                'success_url' => config('app.url').'/billing/success',
-                'cancel_url' => config('app.url').'/billing',
+                'success_url' => $frontendUrl.'/settings/billing',
+                'cancel_url' => $frontendUrl.'/settings/billing',
             ]);
 
         return $checkout->url ?? '';

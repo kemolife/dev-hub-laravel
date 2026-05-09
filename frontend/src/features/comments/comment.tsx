@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router';
 import { Avatar } from '../../components/ui/avatar';
 import { Button } from '../../components/ui/button';
 import { relativeTime } from '../../lib/utils';
@@ -104,18 +105,20 @@ export function Comment({
 
         <div className="flex-1 min-w-0">
           <div className="flex items-baseline gap-2 mb-1">
-            <span
-              className="text-sm font-medium"
+            <Link
+              to={`/u/${comment.author.username}`}
+              className="no-underline text-sm font-medium"
               style={{ color: 'var(--color-text-primary)' }}
             >
               {comment.author.name}
-            </span>
-            <span
-              className="text-xs"
+            </Link>
+            <Link
+              to={`/u/${comment.author.username}`}
+              className="no-underline text-xs"
               style={{ color: 'var(--color-text-tertiary)' }}
             >
               @{comment.author.username}
-            </span>
+            </Link>
             <span
               className="text-xs"
               style={{ color: 'var(--color-text-tertiary)' }}

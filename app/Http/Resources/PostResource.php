@@ -27,6 +27,8 @@ class PostResource extends JsonResource
             'published_at' => $this->resource->published_at,
             'view_count' => $this->resource->view_count,
             'reactions_count' => $this->resource->reactions_count ?? 0,
+            'comments_count' => (int) ($this->resource->comments_count ?? 0),
+            'is_bookmarked' => $this->whenNotNull($this->resource->is_bookmarked ?? null),
             'tags' => $this->resource->tags->map(fn (Tag $tag): array => [
                 'name' => $tag->name,
                 'slug' => $tag->slug,

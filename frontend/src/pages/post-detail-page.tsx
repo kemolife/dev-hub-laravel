@@ -16,6 +16,8 @@ export function PostDetailPage() {
   const [post, setPost] = useState<ApiPost | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
+  const [isBookmarked, setIsBookmarked] = useState(false);
+  const [isTogglingBookmark, setIsTogglingBookmark] = useState(false);
 
   useEffect(() => {
     if (!slug) return;
@@ -24,15 +26,29 @@ export function PostDetailPage() {
     setNotFound(false);
 
     api
-      .get<ApiPost>(`/posts/${slug}`)
-      .then((result) => setPost(result))
+      .get<ApiPost>(`/posts/${slug}`, token ?? undefined)
+      .then((result) => {
+        setPost(result);
+        setIsBookmarked(result.is_bookmarked ?? false);
+      })
       .catch((err) => {
         if (err instanceof ApiError && err.status === 404) {
           setNotFound(true);
         }
       })
       .finally(() => setIsLoading(false));
-  }, [slug]);
+  }, [slug, token]);
+
+  async function handleBookmark() {
+    if (!token || !post || isTogglingBookmark) return;
+    setIsTogglingBookmark(true);
+    try {
+      const res = await api.post<{ bookmarked: boolean }>(`/posts/${post.slug}/bookmark`, {}, token);
+      setIsBookmarked(res.bookmarked);
+    } finally {
+      setIsTogglingBookmark(false);
+    }
+  }
 
   if (isLoading) {
     return (
@@ -61,7 +77,11 @@ export function PostDetailPage() {
               DevHub
             </Link>
           }
-          right={<Button>Bookmark</Button>}
+          right={token ? (
+            <Button onClick={() => { void handleBookmark(); }} disabled={isTogglingBookmark}>
+              {isBookmarked ? '★ Saved' : '☆ Bookmark'}
+            </Button>
+          ) : null}
         />
         <div
           style={{
@@ -119,7 +139,11 @@ export function PostDetailPage() {
             DevHub
           </Link>
         }
-        right={<Button>Bookmark</Button>}
+        right={token ? (
+            <Button onClick={() => { void handleBookmark(); }} disabled={isTogglingBookmark}>
+              {isBookmarked ? '★ Saved' : '☆ Bookmark'}
+            </Button>
+          ) : null}
       />
 
       <div

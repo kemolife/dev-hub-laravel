@@ -11,6 +11,7 @@ use App\Http\Resources\BillingResource;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Laravel\Cashier\Invoice;
 
 class BillingController extends Controller
@@ -62,20 +63,36 @@ class BillingController extends Controller
         /** @var User $user */
         $user = $request->user();
 
-        /** @var Invoice[] $invoices */
-        $invoices = $user->invoices();
+        try {
+            /** @var Invoice[] $invoices */
+            $invoices = $user->invoices();
 
-        $data = array_map(function (Invoice $invoice): array {
-            $stripeInvoice = $invoice->asStripeInvoice();
+            $data = $invoices->map(function (Invoice $invoice): array {
+                $stripeInvoice = $invoice->asStripeInvoice();
 
-            return [
-                'id' => $stripeInvoice->id ?? '',
-                'date' => $invoice->date()->toDateString(),
-                'total' => $invoice->total(),
-                'status' => $stripeInvoice->status ?? '',
-            ];
-        }, $invoices);
+                return [
+                    'id' => $stripeInvoice->id ?? '',
+                    'date' => $invoice->date()->toDateString(),
+                    'amount' => $invoice->total(),
+                    'status' => $stripeInvoice->status ?? '',
+                    'download_url' => url('/api/v1/billing/invoices/'.($stripeInvoice->id ?? '').'/download'),
+                ];
+            })->values()->all();
+        } catch (\Exception) {
+            $data = [];
+        }
 
         return response()->json(['data' => $data]);
+    }
+
+    public function downloadInvoice(Request $request, string $invoiceId): Response
+    {
+        /** @var User $user */
+        $user = $request->user();
+
+        return $user->downloadInvoice($invoiceId, [
+            'vendor' => config('app.name'),
+            'product' => 'Pro Subscription',
+        ]);
     }
 }

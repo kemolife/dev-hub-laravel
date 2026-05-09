@@ -4,12 +4,14 @@
         "claude_code",
         "opencode"
     ],
+    "cloud": false,
     "guidelines": true,
     "mcp": true,
     "nightwatch_mcp": false,
     "sail": false,
     "skills": [
         "cashier-stripe-development",
+        "fortify-development",
         "laravel-best-practices",
         "pennant-development",
         "scout-development",

@@ -97,6 +97,12 @@ class User extends Authenticatable implements FilamentUser
         return $this->hasMany(SocialAccount::class);
     }
 
+    /** @return HasMany<Bookmark, $this> */
+    public function bookmarks(): HasMany
+    {
+        return $this->hasMany(Bookmark::class);
+    }
+
     /** @return HasMany<Post, $this> */
     public function posts(): HasMany
     {
