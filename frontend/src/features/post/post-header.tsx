@@ -34,12 +34,12 @@ export function PostHeader({ post }: PostHeaderProps) {
         {post.title}
       </h1>
 
-      {post.subtitle && (
+      {post.excerpt && (
         <p
           className="leading-snug"
           style={{ fontSize: 18, color: 'var(--color-text-secondary)', margin: '0 0 16px' }}
         >
-          {post.subtitle}
+          {post.excerpt}
         </p>
       )}
 

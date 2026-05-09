@@ -47,8 +47,8 @@ export function EditorPage() {
       .get<ApiPost>(`/posts/${editSlug}`, token)
       .then((post) => {
         setTitle(post.title);
-        setSubtitle(post.subtitle ?? '');
-        setContent(post.body ?? '');
+        setSubtitle(post.excerpt ?? '');
+        setContent(post.body_markdown ?? '');
         setTags(post.tags.map((t) => t.name));
         setSlugRef(post.slug);
       })
@@ -60,8 +60,8 @@ export function EditorPage() {
 
     const body = {
       title: titleRef.current,
-      subtitle: subtitleRef.current || undefined,
-      body: contentRef.current,
+      excerpt: subtitleRef.current || undefined,
+      body_markdown: contentRef.current,
       tags: tagsRef.current,
     };
 

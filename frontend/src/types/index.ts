@@ -17,10 +17,9 @@ export interface ApiPost {
   public_id: string;
   slug: string;
   title: string;
-  subtitle: string | null;
-  body: string;
+  excerpt: string | null;
+  body_markdown: string | null;
   body_html: string;
-  excerpt: string;
   status: 'draft' | 'published' | 'archived';
   reading_time_minutes: number;
   reactions_count: Record<string, number>;
