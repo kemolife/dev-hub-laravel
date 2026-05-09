@@ -1,0 +1,134 @@
+import { useEffect, useRef } from 'react';
+import { EditorView, keymap } from '@codemirror/view';
+import { EditorState } from '@codemirror/state';
+import { markdown, markdownLanguage } from '@codemirror/lang-markdown';
+import { languages } from '@codemirror/language-data';
+import { oneDark } from '@codemirror/theme-one-dark';
+import { defaultKeymap, history, historyKeymap } from '@codemirror/commands';
+import { EditorToolbar } from './editor-toolbar';
+import { PreviewRenderer } from './preview-renderer';
+
+interface MarkdownEditorProps {
+  title: string;
+  subtitle: string;
+  value: string;
+  mode: 'write' | 'preview';
+  onTitleChange: (value: string) => void;
+  onSubtitleChange: (value: string) => void;
+  onChange: (value: string) => void;
+}
+
+export function MarkdownEditor({
+  title,
+  subtitle,
+  value,
+  mode,
+  onTitleChange,
+  onSubtitleChange,
+  onChange,
+}: MarkdownEditorProps) {
+  const editorRef = useRef<HTMLDivElement>(null);
+  const viewRef = useRef<EditorView | null>(null);
+
+  useEffect(() => {
+    if (!editorRef.current) return;
+
+    const state = EditorState.create({
+      doc: value,
+      extensions: [
+        markdown({ base: markdownLanguage, codeLanguages: languages }),
+        oneDark,
+        history(),
+        EditorView.lineWrapping,
+        keymap.of([...defaultKeymap, ...historyKeymap]),
+        EditorView.updateListener.of((update) => {
+          if (update.docChanged) {
+            onChange(update.state.doc.toString());
+          }
+        }),
+        EditorView.theme({
+          '&': { fontSize: '16px', fontFamily: 'var(--font-mono, monospace)' },
+          '.cm-content': { padding: '16px 0', minHeight: '400px' },
+          '.cm-focused': { outline: 'none' },
+          '.cm-editor': { backgroundColor: 'var(--color-bg-primary)' },
+          '&.cm-focused .cm-cursor': { borderLeftColor: 'var(--color-text-primary)' },
+        }),
+      ],
+    });
+
+    const view = new EditorView({ state, parent: editorRef.current });
+    viewRef.current = view;
+
+    return () => {
+      view.destroy();
+      viewRef.current = null;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // intentionally run once — value sync handled below
+
+  // Sync external value changes (e.g. loading an existing draft) without re-creating the editor
+  useEffect(() => {
+    const view = viewRef.current;
+    if (!view) return;
+    const current = view.state.doc.toString();
+    if (current !== value) {
+      view.dispatch({
+        changes: { from: 0, to: current.length, insert: value },
+      });
+    }
+  }, [value]);
+
+  return (
+    <div style={{ backgroundColor: 'var(--color-bg-primary)', minHeight: 520 }}>
+      {/* Title + subtitle always visible */}
+      <div style={{ padding: '32px 48px 0' }}>
+        <input
+          type="text"
+          placeholder="Title"
+          value={title}
+          onChange={(e) => onTitleChange(e.target.value)}
+          style={{
+            width: '100%',
+            border: 'none',
+            background: 'transparent',
+            fontSize: 26,
+            fontWeight: 500,
+            padding: 0,
+            margin: '0 0 8px',
+            lineHeight: 1.3,
+            outline: 'none',
+            fontFamily: 'inherit',
+            color: 'var(--color-text-primary)',
+          }}
+        />
+        <input
+          type="text"
+          placeholder="A short subtitle (optional)"
+          value={subtitle}
+          onChange={(e) => onSubtitleChange(e.target.value)}
+          style={{
+            width: '100%',
+            border: 'none',
+            background: 'transparent',
+            fontSize: 16,
+            padding: 0,
+            margin: '0 0 16px',
+            color: 'var(--color-text-secondary)',
+            outline: 'none',
+            fontFamily: 'inherit',
+          }}
+        />
+        <div style={{ borderTop: '0.5px solid var(--color-border-tertiary)' }} />
+      </div>
+
+      {mode === 'write' ? (
+        <>
+          <EditorToolbar viewRef={viewRef} />
+          <div ref={editorRef} style={{ padding: '0 48px' }} />
+        </>
+      ) : (
+        <PreviewRenderer markdown={value} />
+      )}
+    </div>
+  );
+}

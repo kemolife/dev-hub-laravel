@@ -6,7 +6,7 @@ import { useAuth } from '../features/auth/auth-context';
 import { EditorSidebar } from '../features/editor/editor-sidebar';
 import { useAutoSave } from '../features/editor/use-auto-save';
 import { useEditorStats } from '../features/editor/use-editor-stats';
-import { WritingArea } from '../features/editor/writing-area';
+import { MarkdownEditor } from '../features/editor/markdown-editor';
 import { api } from '../lib/api';
 import type { ApiPost } from '../types';
 
@@ -22,6 +22,7 @@ export function EditorPage() {
   const [slugRef, setSlugRef] = useState<string | null>(null);
   const [isPublishing, setIsPublishing] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
+  const [mode, setMode] = useState<'write' | 'preview'>('write');
 
   // Keep mutable refs so the save callback always sees latest values without
   // adding them as dependencies (which would re-create the callback too often).
@@ -65,12 +66,16 @@ export function EditorPage() {
     };
 
     if (slugRefMutable.current) {
-      await api.put<ApiPost>(`/posts/${slugRefMutable.current}`, body, token);
+      const updated = await api.put<ApiPost>(`/posts/${slugRefMutable.current}`, body, token);
+      slugRefMutable.current = updated.slug;
+      setSlugRef(updated.slug);
     } else {
       const created = await api.post<ApiPost>('/posts', { ...body, status: 'draft' }, token);
+      slugRefMutable.current = created.slug;
       setSlugRef(created.slug);
+      navigate(`/editor?slug=${created.slug}`, { replace: true });
     }
-  }, [token]);
+  }, [token, navigate]);
 
   const { label: draftLabel, isDirty, markDirty } = useAutoSave({ onSave: handleSave });
 
@@ -156,7 +161,9 @@ export function EditorPage() {
         }
         right={
           <>
-            <Button>Preview</Button>
+            <Button onClick={() => setMode((m) => (m === 'write' ? 'preview' : 'write'))}>
+              {mode === 'write' ? 'Preview' : 'Edit'}
+            </Button>
             <Button
               variant="primary"
               onClick={() => { void handlePublish(); }}
@@ -169,12 +176,14 @@ export function EditorPage() {
       />
 
       <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) 240px' }}>
-        <WritingArea
+        <MarkdownEditor
           title={title}
           subtitle={subtitle}
+          value={content}
+          mode={mode}
           onTitleChange={handleTitleChange}
           onSubtitleChange={handleSubtitleChange}
-          onContentChange={handleContentChange}
+          onChange={handleContentChange}
         />
         <EditorSidebar stats={stats} tags={tags} onTagsChange={handleTagsChange} />
       </div>
