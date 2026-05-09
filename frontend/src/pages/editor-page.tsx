@@ -48,7 +48,7 @@ export function EditorPage() {
       .then((post) => {
         setTitle(post.title);
         setSubtitle(post.subtitle ?? '');
-        setContent(post.body);
+        setContent(post.body ?? '');
         setTags(post.tags.map((t) => t.name));
         setSlugRef(post.slug);
       })
