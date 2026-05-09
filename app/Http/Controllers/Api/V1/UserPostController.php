@@ -19,8 +19,9 @@ class UserPostController extends Controller
         $posts = $request->user()
             ->posts()
             ->when($status, fn ($q) => $q->where('status', $status))
-            ->with('tags')
+            ->with('user', 'tags')
             ->latest('updated_at')
+            ->latest('id')
             ->paginate();
 
         return PostResource::collection($posts);
