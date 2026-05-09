@@ -5,7 +5,7 @@ import { EditorState, RangeSetBuilder } from '@codemirror/state';
 import { markdown, markdownLanguage } from '@codemirror/lang-markdown';
 import { languages } from '@codemirror/language-data';
 import { defaultKeymap, history, historyKeymap } from '@codemirror/commands';
-import { HighlightStyle, syntaxHighlighting, defaultHighlightStyle, syntaxTree } from '@codemirror/language';
+import { HighlightStyle, LanguageDescription, syntaxHighlighting, defaultHighlightStyle, syntaxTree } from '@codemirror/language';
 import { tags } from '@lezer/highlight';
 import { EditorToolbar } from './editor-toolbar';
 import { PreviewRenderer } from './preview-renderer';
@@ -15,6 +15,13 @@ const codeStyle = HighlightStyle.define([
   { tag: tags.monospace, backgroundColor: 'rgba(175,184,193,0.25)', padding: '1px 5px', borderRadius: '4px' },
   { tag: tags.processingInstruction, color: '#6e7781' },
 ]);
+
+// Normalise fence info string before matching:
+//   "<?php" → "php", "python3" → "python3", etc.
+function matchCodeLanguage(info: string): LanguageDescription | null {
+  const normalized = info.trim().toLowerCase().replace(/^<\?/, '');
+  return LanguageDescription.matchLanguageName(languages, normalized, true) ?? null;
+}
 
 const blockLineMark = Decoration.line({ class: 'cm-fenced-block' });
 
@@ -80,7 +87,7 @@ export function MarkdownEditor({
     const state = EditorState.create({
       doc: value,
       extensions: [
-        markdown({ base: markdownLanguage, codeLanguages: languages }),
+        markdown({ base: markdownLanguage, codeLanguages: matchCodeLanguage }),
         syntaxHighlighting(defaultHighlightStyle, { fallback: true }),
         syntaxHighlighting(codeStyle),
         codeBlockHighlighter,
