@@ -176,13 +176,16 @@ export function MarkdownEditor({
         <div style={{ borderTop: '0.5px solid var(--color-border-tertiary)' }} />
       </div>
 
-      {mode === 'write' ? (
-        <>
-          <EditorToolbar viewRef={viewRef} />
-          <div ref={editorRef} style={{ padding: '0 48px' }} />
-        </>
-      ) : (
-        <PreviewRenderer markdown={value} />
+      {/* Editor always stays mounted so CodeMirror's DOM node is never replaced. */}
+      <div style={{ display: mode === 'write' ? undefined : 'none' }}>
+        <EditorToolbar viewRef={viewRef} />
+        <div ref={editorRef} style={{ padding: '0 48px' }} />
+      </div>
+
+      {mode === 'preview' && (
+        <div style={{ height: 'calc(100vh - 280px)', overflow: 'auto' }}>
+          <PreviewRenderer markdown={value} />
+        </div>
       )}
     </div>
   );
