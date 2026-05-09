@@ -31,7 +31,7 @@ function buildCodeBlockDecorations(view: EditorView): DecorationSet {
     from: view.viewport.from,
     to: view.viewport.to,
     enter(node) {
-      if (node.name === 'FencedCode') {
+      if (node.name === 'CodeText') {
         const from = view.state.doc.lineAt(node.from);
         const to = view.state.doc.lineAt(node.to);
         for (let n = from.number; n <= to.number; n++) {
