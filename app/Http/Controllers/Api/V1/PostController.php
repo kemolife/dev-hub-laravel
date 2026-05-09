@@ -11,6 +11,7 @@ use App\Models\Post;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Support\Facades\Auth;
 
 class PostController extends Controller
 {
@@ -26,6 +27,9 @@ class PostController extends Controller
 
     public function show(Request $request, Post $post): JsonResponse
     {
+        // Route is public; resolve Bearer token so owners can view their own drafts.
+        Auth::shouldUse('sanctum');
+
         $this->authorize('view', $post);
 
         $post->loadMissing('user', 'tags');
