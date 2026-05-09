@@ -1,10 +1,11 @@
 import { useEffect, useRef } from 'react';
-import { EditorView, keymap } from '@codemirror/view';
-import { EditorState } from '@codemirror/state';
+import { EditorView, ViewPlugin, Decoration, keymap } from '@codemirror/view';
+import type { DecorationSet, ViewUpdate } from '@codemirror/view';
+import { EditorState, RangeSetBuilder } from '@codemirror/state';
 import { markdown, markdownLanguage } from '@codemirror/lang-markdown';
 import { languages } from '@codemirror/language-data';
 import { defaultKeymap, history, historyKeymap } from '@codemirror/commands';
-import { HighlightStyle, syntaxHighlighting, defaultHighlightStyle } from '@codemirror/language';
+import { HighlightStyle, syntaxHighlighting, defaultHighlightStyle, syntaxTree } from '@codemirror/language';
 import { tags } from '@lezer/highlight';
 import { EditorToolbar } from './editor-toolbar';
 import { PreviewRenderer } from './preview-renderer';
@@ -14,6 +15,41 @@ const codeStyle = HighlightStyle.define([
   { tag: tags.monospace, backgroundColor: 'rgba(175,184,193,0.25)', padding: '1px 5px', borderRadius: '4px' },
   { tag: tags.processingInstruction, color: '#6e7781' },
 ]);
+
+const blockLineMark = Decoration.line({ class: 'cm-fenced-block' });
+
+function buildCodeBlockDecorations(view: EditorView): DecorationSet {
+  const builder = new RangeSetBuilder<Decoration>();
+  syntaxTree(view.state).iterate({
+    from: view.viewport.from,
+    to: view.viewport.to,
+    enter(node) {
+      if (node.name === 'FencedCode') {
+        const from = view.state.doc.lineAt(node.from);
+        const to = view.state.doc.lineAt(node.to);
+        for (let n = from.number; n <= to.number; n++) {
+          const line = view.state.doc.line(n);
+          builder.add(line.from, line.from, blockLineMark);
+        }
+        return false;
+      }
+    },
+  });
+  return builder.finish();
+}
+
+const codeBlockHighlighter = ViewPlugin.fromClass(
+  class {
+    decorations: DecorationSet;
+    constructor(view: EditorView) { this.decorations = buildCodeBlockDecorations(view); }
+    update(update: ViewUpdate) {
+      if (update.docChanged || update.viewportChanged) {
+        this.decorations = buildCodeBlockDecorations(update.view);
+      }
+    }
+  },
+  { decorations: (v) => v.decorations },
+);
 
 interface MarkdownEditorProps {
   title: string;
@@ -47,6 +83,7 @@ export function MarkdownEditor({
         markdown({ base: markdownLanguage, codeLanguages: languages }),
         syntaxHighlighting(defaultHighlightStyle, { fallback: true }),
         syntaxHighlighting(codeStyle),
+        codeBlockHighlighter,
         history(),
         EditorView.lineWrapping,
         keymap.of([...defaultKeymap, ...historyKeymap]),
@@ -68,6 +105,7 @@ export function MarkdownEditor({
           '.cm-gutters': { backgroundColor: 'var(--color-bg-primary)', border: 'none' },
           '&.cm-focused .cm-cursor': { borderLeftColor: 'var(--color-text-primary)' },
           '.cm-activeLine': { backgroundColor: 'transparent' },
+          '.cm-fenced-block': { backgroundColor: 'rgba(175,184,193,0.15)', display: 'block' },
           '.cm-selectionBackground, ::selection': { backgroundColor: 'rgba(100,149,237,0.2)' },
         }),
       ],
