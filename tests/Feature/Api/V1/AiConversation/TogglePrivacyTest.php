@@ -41,4 +41,30 @@ class TogglePrivacyTest extends TestCase
             ->patchJson("/api/v1/conversations/{$conversation->public_id}")
             ->assertForbidden();
     }
+
+    #[Test]
+    public function it_requires_authentication(): void
+    {
+        $conversation = AiConversation::factory()->create();
+
+        $this->patchJson("/api/v1/conversations/{$conversation->public_id}")
+            ->assertUnauthorized();
+    }
+
+    #[Test]
+    public function owner_can_toggle_conversation_back_to_public(): void
+    {
+        $user = User::factory()->create();
+        $conversation = AiConversation::factory()->for($user)->private()->create();
+
+        $this->actingAs($user, 'sanctum')
+            ->patchJson("/api/v1/conversations/{$conversation->public_id}")
+            ->assertOk()
+            ->assertJsonPath('data.is_private', false);
+
+        $this->assertDatabaseHas('ai_conversations', [
+            'id' => $conversation->id,
+            'is_private' => false,
+        ]);
+    }
 }

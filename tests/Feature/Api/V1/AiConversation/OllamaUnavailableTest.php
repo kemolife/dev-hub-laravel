@@ -33,6 +33,7 @@ class OllamaUnavailableTest extends TestCase
                 'selection_start' => 0,
                 'selection_end' => 9,
             ])
-            ->assertServiceUnavailable();
+            ->assertServiceUnavailable()
+            ->assertJson(['message' => 'AI service is currently unavailable. Please try again later.']);
     }
 }

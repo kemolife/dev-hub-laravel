@@ -67,4 +67,26 @@ class ContinueConversationTest extends TestCase
             ])
             ->assertForbidden();
     }
+
+    #[Test]
+    public function it_requires_authentication_to_add_message(): void
+    {
+        $conversation = AiConversation::factory()->create();
+
+        $this->postJson("/api/v1/conversations/{$conversation->public_id}/messages", [
+            'content' => 'Hello',
+        ])->assertUnauthorized();
+    }
+
+    #[Test]
+    public function it_validates_content_is_required(): void
+    {
+        $user = User::factory()->create();
+        $conversation = AiConversation::factory()->for($user)->create();
+
+        $this->actingAs($user, 'sanctum')
+            ->postJson("/api/v1/conversations/{$conversation->public_id}/messages", [])
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors(['content']);
+    }
 }
