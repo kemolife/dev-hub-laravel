@@ -14,8 +14,8 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->foreignId('post_id')->constrained()->cascadeOnDelete();
             $table->text('selected_text');
-            $table->unsignedInteger('selection_start');
-            $table->unsignedInteger('selection_end');
+            $table->unsignedInteger('selection_start')->nullable();
+            $table->unsignedInteger('selection_end')->nullable();
             $table->boolean('is_private')->default(false);
             $table->timestamps();
 
