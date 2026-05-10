@@ -30,7 +30,7 @@ class AiConversationController extends Controller
         $conversations = AiConversation::where('post_id', $post->id)
             ->where(function ($query) use ($request): void {
                 $query->where('is_private', false)
-                    ->orWhere('user_id', $request->user()->id);
+                    ->orWhere('user_id', $request->user()?->id);
             })
             ->with('messages')
             ->latest()
@@ -106,7 +106,7 @@ class AiConversationController extends Controller
                 'content' => $fullContent,
             ]);
 
-            echo 'data: '.json_encode(['done' => true])."\n\n";
+            echo 'data: '.json_encode(['done' => true, 'conversation_id' => $conversation->public_id])."\n\n";
             ob_flush();
             flush();
         }, 200, [
