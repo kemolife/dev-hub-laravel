@@ -18,11 +18,6 @@ class ContinueConversationAction
     /** @return Generator<int, string> */
     public function execute(AiConversation $conversation, ContinueConversationData $data): Generator
     {
-        $conversation->messages()->create([
-            'role' => MessageRole::User,
-            'content' => $data->content,
-        ]);
-
         $history = $conversation->messages()
             ->orderBy('created_at')
             ->get()
@@ -31,6 +26,11 @@ class ContinueConversationAction
                 'content' => $message->content,
             ])
             ->toArray();
+
+        $conversation->messages()->create([
+            'role' => MessageRole::User,
+            'content' => $data->content,
+        ]);
 
         return $this->ollamaClient->chat($data->content, $history);
     }
