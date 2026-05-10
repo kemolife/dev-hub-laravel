@@ -160,7 +160,7 @@ export function PostDetailPage() {
           <PostHeader post={post} />
           <ProseContent ref={proseRef} html={post.body_html} />
 
-          {token && proseRef.current && (
+          {token && (
             <ConversationHighlights
               postSlug={slug!}
               token={token}
