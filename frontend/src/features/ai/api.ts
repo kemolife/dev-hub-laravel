@@ -87,24 +87,33 @@ async function* parseEventStream(body: ReadableStream<Uint8Array>): AsyncGenerat
   const decoder = new TextDecoder();
   let buffer = '';
 
-  while (true) {
-    const { done, value } = await reader.read();
-    if (done) break;
-    buffer += decoder.decode(value, { stream: true });
+  try {
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
 
-    const parts = buffer.split('\n\n');
-    buffer = parts.pop() ?? '';
+      const parts = buffer.split('\n\n');
+      buffer = parts.pop() ?? '';
 
-    for (const part of parts) {
-      for (const line of part.split('\n')) {
-        if (!line.startsWith('data: ')) continue;
-        const json = JSON.parse(line.slice(6)) as Record<string, unknown>;
-        if (typeof json.content === 'string') {
-          yield { type: 'content', content: json.content };
-        } else if (json.done === true) {
-          yield { type: 'done', conversationId: typeof json.conversation_id === 'string' ? json.conversation_id : undefined };
+      for (const part of parts) {
+        for (const line of part.split('\n')) {
+          if (!line.startsWith('data: ')) continue;
+          let json: Record<string, unknown>;
+          try {
+            json = JSON.parse(line.slice(6)) as Record<string, unknown>;
+          } catch {
+            continue;
+          }
+          if (typeof json.content === 'string') {
+            yield { type: 'content', content: json.content };
+          } else if (json.done === true) {
+            yield { type: 'done', conversationId: typeof json.conversation_id === 'string' ? json.conversation_id : undefined };
+          }
         }
       }
     }
+  } finally {
+    reader.releaseLock();
   }
 }
