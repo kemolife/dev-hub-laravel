@@ -47,7 +47,8 @@ class OllamaClientTest extends TestCase
 
             return $body['model'] === 'llama3.2'
                 && $body['stream'] === true
-                && $body['messages'][0]['content'] === 'Test prompt';
+                && $body['messages'][0]['content'] === 'Test prompt'
+                && $body['messages'][0]['role'] === 'user';
         });
 
         $this->assertSame(['Hello ', 'world'], $chunks);

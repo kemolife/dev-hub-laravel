@@ -25,7 +25,7 @@ class OllamaClient
         $messages = array_merge($history, [['role' => 'user', 'content' => $prompt]]);
 
         try {
-            $response = Http::withOptions(['stream' => true, 'timeout' => 120, 'connect_timeout' => 5])
+            $response = Http::withOptions(['timeout' => 120, 'connect_timeout' => 5])
                 ->post($this->baseUrl.'/api/chat', [
                     'model' => $this->model,
                     'messages' => $messages,
