@@ -16,6 +16,7 @@ use App\Models\User;
 use App\Observers\PostObserver;
 use App\Policies\CommentPolicy;
 use App\Policies\PostPolicy;
+use App\Services\OllamaClient;
 use Carbon\CarbonImmutable;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Events\QueryExecuted;
@@ -38,7 +39,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->singleton(OllamaClient::class, fn () => new OllamaClient(
+            baseUrl: (string) config('services.ollama.base_url', 'http://localhost:11434'),
+            model: (string) config('services.ollama.model', 'llama3.2'),
+        ));
     }
 
     /**
