@@ -61,7 +61,7 @@ export function ExplanationModal({ selection, postSlug, token, onClose, onOpenCh
         left: selection.rect.left,
         width: selection.rect.width,
         height: selection.rect.height,
-        backgroundColor: 'rgba(250, 200, 80, 0.45)',
+        backgroundColor: 'rgba(255, 236, 61, 0.45)',
         pointerEvents: 'none',
         zIndex: 1999,
       }}
