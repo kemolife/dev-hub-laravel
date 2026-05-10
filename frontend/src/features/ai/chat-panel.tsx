@@ -1,6 +1,9 @@
+import MarkdownIt from 'markdown-it';
 import { useEffect, useRef, useState } from 'react';
 import { fetchConversation, continueConversationStream } from './api';
 import type { ApiAiConversation, ApiAiMessage } from '../../types';
+
+const md = new MarkdownIt({ breaks: true, linkify: false });
 
 interface ChatPanelProps {
   conversationId: string;
@@ -19,6 +22,7 @@ export function ChatPanel({ conversationId, token, onClose }: ChatPanelProps) {
   const isMountedRef = useRef(true);
 
   useEffect(() => {
+    isMountedRef.current = true;
     return () => { isMountedRef.current = false; };
   }, []);
 
@@ -78,17 +82,15 @@ export function ChatPanel({ conversationId, token, onClose }: ChatPanelProps) {
   return (
     <div
       style={{
-        position: 'fixed',
-        top: 52,
-        right: 0,
-        width: 360,
-        height: 'calc(100vh - 52px)',
+        width: '100%',
+        height: '100%',
         backgroundColor: 'var(--color-bg-primary)',
         borderLeft: '0.5px solid var(--color-border-primary)',
+        borderRadius: '0 var(--radius-lg) var(--radius-lg) 0',
         display: 'flex',
         flexDirection: 'column',
-        zIndex: 500,
         fontFamily: 'var(--font-sans)',
+        overflow: 'hidden',
       }}
     >
       {/* Header */}
@@ -97,43 +99,54 @@ export function ChatPanel({ conversationId, token, onClose }: ChatPanelProps) {
           padding: '12px 16px',
           borderBottom: '0.5px solid var(--color-border-tertiary)',
           display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'flex-start',
-          gap: 8,
+          flexDirection: 'column',
+          gap: 6,
         }}
       >
-        <p
-          style={{
-            margin: 0,
-            fontSize: 12,
-            color: 'var(--color-text-secondary)',
-            fontStyle: 'italic',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
-            flex: 1,
-          }}
-        >
-          {conversation
-            ? conversation.selected_text.length > 60
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <span
+            style={{
+              fontSize: 11,
+              fontWeight: 600,
+              letterSpacing: '0.06em',
+              textTransform: 'uppercase',
+              color: 'var(--color-text-tertiary)',
+            }}
+          >
+            AI Chat
+          </span>
+          <button
+            onClick={onClose}
+            style={{
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              color: 'var(--color-text-tertiary)',
+              fontSize: 18,
+              lineHeight: 1,
+              padding: 0,
+            }}
+          >
+            ×
+          </button>
+        </div>
+        {conversation && (
+          <p
+            style={{
+              margin: 0,
+              fontSize: 12,
+              color: 'var(--color-text-secondary)',
+              fontStyle: 'italic',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            {conversation.selected_text.length > 60
               ? `"${conversation.selected_text.slice(0, 60)}…"`
-              : `"${conversation.selected_text}"`
-            : ''}
-        </p>
-        <button
-          onClick={onClose}
-          style={{
-            background: 'none',
-            border: 'none',
-            cursor: 'pointer',
-            color: 'var(--color-text-secondary)',
-            fontSize: 18,
-            lineHeight: 1,
-            flexShrink: 0,
-          }}
-        >
-          ×
-        </button>
+              : `"${conversation.selected_text}"`}
+          </p>
+        )}
       </div>
 
       {/* Messages */}
@@ -193,23 +206,31 @@ export function ChatPanel({ conversationId, token, onClose }: ChatPanelProps) {
 
 function MessageBubble({ message, streaming = false }: { message: ApiAiMessage; streaming?: boolean }) {
   const isUser = message.role === 'user';
+  const html = isUser ? null : md.render(message.content + (streaming ? ' ▍' : ''));
+
   return (
     <div style={{ display: 'flex', justifyContent: isUser ? 'flex-end' : 'flex-start' }}>
-      <div
-        style={{
-          maxWidth: '85%',
-          padding: '8px 12px',
-          borderRadius: 'var(--radius-sm)',
-          fontSize: 13,
-          lineHeight: 1.55,
-          whiteSpace: 'pre-wrap',
-          backgroundColor: isUser ? 'var(--color-bg-inverse)' : 'var(--color-bg-secondary)',
-          color: isUser ? 'var(--color-text-inverse)' : 'var(--color-text-primary)',
-        }}
-      >
-        {message.content}
-        {streaming && <span style={{ opacity: 0.5 }}>▍</span>}
-      </div>
+      {isUser ? (
+        <div
+          style={{
+            maxWidth: '80%',
+            padding: '8px 12px',
+            borderRadius: '14px 14px 4px 14px',
+            fontSize: 13,
+            lineHeight: 1.55,
+            backgroundColor: 'var(--color-bg-inverse)',
+            color: 'var(--color-text-inverse)',
+          }}
+        >
+          {message.content}
+        </div>
+      ) : (
+        <div
+          className="ai-prose"
+          dangerouslySetInnerHTML={{ __html: html! }}
+          style={{ fontSize: 13, lineHeight: 1.6, color: 'var(--color-text-primary)', maxWidth: '100%' }}
+        />
+      )}
     </div>
   );
 }

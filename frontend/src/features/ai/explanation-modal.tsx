@@ -91,6 +91,19 @@ export function ExplanationModal({ selection, postSlug, token, onClose, onOpenCh
         }}
         onClick={(e) => e.stopPropagation()}
       >
+        <p
+          style={{
+            margin: '0 0 14px',
+            fontSize: 13,
+            fontWeight: 600,
+            letterSpacing: '0.02em',
+            color: 'var(--color-text-secondary)',
+            textTransform: 'uppercase',
+          }}
+        >
+          Ask AI
+        </p>
+
         <blockquote
           style={{
             borderLeft: '3px solid var(--color-border-secondary)',

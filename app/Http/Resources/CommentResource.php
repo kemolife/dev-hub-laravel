@@ -23,7 +23,7 @@ class CommentResource extends JsonResource
             'edited_at' => $this->resource->edited_at,
             'created_at' => $this->resource->created_at,
             'author' => $trashed ? null : new UserResource($this->resource->user),
-            'replies' => CommentResource::collection($this->resource->replies),
+            'children' => CommentResource::collection($this->resource->replies),
             'reply_count' => $this->resource->replies->count(),
             'is_deleted' => $trashed,
         ];

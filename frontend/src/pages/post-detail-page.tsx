@@ -116,90 +116,98 @@ export function PostDetailPage() {
   }
 
   return (
-    <div
-      style={{
-        position: 'relative',
-        maxWidth: 1080,
-        margin: '0 auto',
-        backgroundColor: 'var(--color-bg-tertiary)',
-        borderRadius: 'var(--radius-lg)',
-        border: '0.5px solid var(--color-border-tertiary)',
-        overflow: 'hidden',
-      }}
-    >
-      <Topbar
-        left={
-          <Link
-            to="/"
-            style={{
-              fontFamily: 'var(--font-serif)',
-              fontSize: 18,
-              fontWeight: 500,
-              textDecoration: 'none',
-              color: 'inherit',
-            }}
-          >
-            DevHub
-          </Link>
-        }
-        right={token ? (
-          <Button onClick={() => { void handleBookmark(); }} disabled={isTogglingBookmark}>
-            {isBookmarked ? '★ Saved' : '☆ Bookmark'}
-          </Button>
-        ) : null}
-      />
-
+    <div style={{ display: 'flex', maxWidth: activeChatId ? 1080 + 360 : 1080, margin: '0 auto', alignItems: 'stretch' }}>
+      {/* Post column */}
       <div
         style={{
-          backgroundColor: 'var(--color-bg-primary)',
-          padding: '40px 64px',
+          flex: 1,
+          minWidth: 0,
           position: 'relative',
+          backgroundColor: 'var(--color-bg-tertiary)',
+          borderRadius: activeChatId ? 'var(--radius-lg) 0 0 var(--radius-lg)' : 'var(--radius-lg)',
+          border: '0.5px solid var(--color-border-tertiary)',
+          borderRight: activeChatId ? 'none' : '0.5px solid var(--color-border-tertiary)',
+          overflow: 'hidden',
+          transition: 'border-radius 200ms ease',
         }}
       >
-        <div style={{ maxWidth: 580, margin: '0 auto' }}>
-          <PostHeader post={post} />
-          {/* Wrapper is the offset parent for highlight divs — must match containerRef */}
-          <div style={{ position: 'relative' }}>
-            <ProseContent ref={proseRef} html={post.body_html} />
-            {token && (
-              <ConversationHighlights
-                postSlug={slug!}
-                token={token}
-                containerRef={proseRef}
-                onSelectConversation={setActiveChatId}
-              />
-            )}
+        <Topbar
+          left={
+            <Link
+              to="/"
+              style={{
+                fontFamily: 'var(--font-serif)',
+                fontSize: 18,
+                fontWeight: 500,
+                textDecoration: 'none',
+                color: 'inherit',
+              }}
+            >
+              DevHub
+            </Link>
+          }
+          right={token ? (
+            <Button onClick={() => { void handleBookmark(); }} disabled={isTogglingBookmark}>
+              {isBookmarked ? '★ Saved' : '☆ Bookmark'}
+            </Button>
+          ) : null}
+        />
+
+        <div
+          style={{
+            backgroundColor: 'var(--color-bg-primary)',
+            padding: '40px 64px',
+            position: 'relative',
+          }}
+        >
+          <div style={{ maxWidth: 580, margin: '0 auto' }}>
+            <PostHeader post={post} />
+            {/* Wrapper is the offset parent for highlight divs — must match containerRef */}
+            <div style={{ position: 'relative' }}>
+              <ProseContent ref={proseRef} html={post.body_html} />
+              {token && (
+                <ConversationHighlights
+                  postSlug={slug!}
+                  token={token}
+                  containerRef={proseRef}
+                  onSelectConversation={setActiveChatId}
+                />
+              )}
+            </div>
           </div>
         </div>
+
+        {selection && token && !activeSelection && (
+          <AskAiButton
+            selection={selection}
+            onAsk={(sel) => setActiveSelection(sel)}
+          />
+        )}
+
+        {activeSelection && token && (
+          <ExplanationModal
+            selection={activeSelection}
+            postSlug={slug!}
+            token={token}
+            onClose={() => setActiveSelection(null)}
+            onOpenChat={(id) => { setActiveSelection(null); setActiveChatId(id); }}
+          />
+        )}
+
+        <ReactionBar />
+        <CommentsSection postSlug={slug!} token={token} />
       </div>
 
-      {selection && token && !activeSelection && (
-        <AskAiButton
-          selection={selection}
-          onAsk={(sel) => setActiveSelection(sel)}
-        />
-      )}
-
-      {activeSelection && token && (
-        <ExplanationModal
-          selection={activeSelection}
-          postSlug={slug!}
-          token={token}
-          onClose={() => setActiveSelection(null)}
-          onOpenChat={(id) => { setActiveSelection(null); setActiveChatId(id); }}
-        />
-      )}
-
+      {/* Chat column */}
       {activeChatId && token && (
-        <ChatPanel
-          conversationId={activeChatId}
-          token={token}
-          onClose={() => setActiveChatId(null)}
-        />
+        <div style={{ width: 360, flexShrink: 0, position: 'sticky', top: 0, height: '100vh', display: 'flex', flexDirection: 'column' }}>
+          <ChatPanel
+            conversationId={activeChatId}
+            token={token}
+            onClose={() => setActiveChatId(null)}
+          />
+        </div>
       )}
-
-      <ReactionBar />
-      <CommentsSection postSlug={slug!} token={token} />
     </div>
   );
 }
