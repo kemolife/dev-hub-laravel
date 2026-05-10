@@ -11,7 +11,11 @@ export function useTextSelection(containerRef: React.RefObject<HTMLElement | nul
   const [selection, setSelection] = useState<TextSelection | null>(null);
 
   useEffect(() => {
-    function handleSelectionChange() {
+    // Only commit a selection after mouse release. Updating state during drag
+    // causes React to re-render mid-selection, which can collapse the browser selection.
+    let isMouseDown = false;
+
+    function readSelection() {
       const sel = window.getSelection();
 
       if (!sel || sel.isCollapsed || sel.toString().trim() === '') {
@@ -42,8 +46,19 @@ export function useTextSelection(containerRef: React.RefObject<HTMLElement | nul
       });
     }
 
+    function handleMouseDown() { isMouseDown = true; }
+    function handleMouseUp() { isMouseDown = false; readSelection(); }
+    // Handles keyboard selection (Shift+Arrow, etc.) and selection clears.
+    function handleSelectionChange() { if (!isMouseDown) readSelection(); }
+
+    document.addEventListener('mousedown', handleMouseDown);
+    document.addEventListener('mouseup', handleMouseUp);
     document.addEventListener('selectionchange', handleSelectionChange);
-    return () => document.removeEventListener('selectionchange', handleSelectionChange);
+    return () => {
+      document.removeEventListener('mousedown', handleMouseDown);
+      document.removeEventListener('mouseup', handleMouseUp);
+      document.removeEventListener('selectionchange', handleSelectionChange);
+    };
   }, [containerRef]);
 
   return selection;
