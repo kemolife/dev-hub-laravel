@@ -16,6 +16,7 @@ import { RegisterPage } from './pages/register-page';
 import { SearchPage } from './pages/search-page';
 import { TagDetailPage } from './pages/tag-detail-page';
 import { TagsPage } from './pages/tags-page';
+import { ConversationPage } from './pages/conversation-page';
 import { TwoFactorPage } from './pages/two-factor-page';
 
 function RequireAuth({ children }: { children: React.ReactNode }) {
@@ -122,6 +123,14 @@ export const router = createBrowserRouter([
     element: (
       <RequireAuth>
         <BillingPage />
+      </RequireAuth>
+    ),
+  },
+  {
+    path: '/conversations/:id',
+    element: (
+      <RequireAuth>
+        <ConversationPage />
       </RequireAuth>
     ),
   },
