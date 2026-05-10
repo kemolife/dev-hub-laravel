@@ -143,3 +143,21 @@ export interface UserSummary {
   username: string;
   avatar_path: string | null;
 }
+
+export interface ApiAiMessage {
+  id: number;
+  role: 'user' | 'assistant';
+  content: string;
+  created_at: string;
+}
+
+export interface ApiAiConversation {
+  id: string;
+  selected_text: string;
+  selection_start: number;
+  selection_end: number;
+  is_private: boolean;
+  owner_id: number;
+  messages: ApiAiMessage[];
+  created_at: string;
+}
