@@ -1,5 +1,6 @@
 <?php
 
+use App\Exceptions\OllamaUnavailableException;
 use App\Http\Middleware\IdempotencyMiddleware;
 use App\Http\Middleware\TrackReferral;
 use Illuminate\Foundation\Application;
@@ -28,5 +29,7 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
+        $exceptions->render(function (OllamaUnavailableException $e) {
+            return response()->json(['message' => 'AI service is currently unavailable. Please try again later.'], 503);
+        });
     })->create();
