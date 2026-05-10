@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, useParams } from 'react-router';
 import { Button } from '../components/ui/button';
 import { Topbar } from '../components/layout/topbar';
@@ -8,7 +8,13 @@ import { ReactionBar } from '../features/post/reaction-bar';
 import { CommentsSection } from '../features/comments/comments-section';
 import { useAuth } from '../features/auth/auth-context';
 import { api, ApiError } from '../lib/api';
+import { useTextSelection } from '../features/ai/use-text-selection';
+import { AskAiButton } from '../features/ai/ask-ai-button';
+import { ExplanationModal } from '../features/ai/explanation-modal';
+import { ChatPanel } from '../features/ai/chat-panel';
+import { ConversationHighlights } from '../features/ai/conversation-highlights';
 import type { ApiPost } from '../types';
+import type { TextSelection } from '../features/ai/use-text-selection';
 
 export function PostDetailPage() {
   const { slug } = useParams<{ slug: string }>();
@@ -19,23 +25,19 @@ export function PostDetailPage() {
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [isTogglingBookmark, setIsTogglingBookmark] = useState(false);
 
+  const proseRef = useRef<HTMLDivElement>(null);
+  const selection = useTextSelection(proseRef);
+  const [activeSelection, setActiveSelection] = useState<TextSelection | null>(null);
+  const [activeChatId, setActiveChatId] = useState<string | null>(null);
+
   useEffect(() => {
     if (!slug) return;
-
     setIsLoading(true);
     setNotFound(false);
-
     api
       .get<ApiPost>(`/posts/${slug}`, token ?? undefined)
-      .then((result) => {
-        setPost(result);
-        setIsBookmarked(result.is_bookmarked ?? false);
-      })
-      .catch((err) => {
-        if (err instanceof ApiError && err.status === 404) {
-          setNotFound(true);
-        }
-      })
+      .then((result) => { setPost(result); setIsBookmarked(result.is_bookmarked ?? false); })
+      .catch((err) => { if (err instanceof ApiError && err.status === 404) setNotFound(true); })
       .finally(() => setIsLoading(false));
   }, [slug, token]);
 
@@ -116,6 +118,7 @@ export function PostDetailPage() {
   return (
     <div
       style={{
+        position: 'relative',
         maxWidth: 1080,
         margin: '0 auto',
         backgroundColor: 'var(--color-bg-tertiary)',
@@ -140,23 +143,58 @@ export function PostDetailPage() {
           </Link>
         }
         right={token ? (
-            <Button onClick={() => { void handleBookmark(); }} disabled={isTogglingBookmark}>
-              {isBookmarked ? '★ Saved' : '☆ Bookmark'}
-            </Button>
-          ) : null}
+          <Button onClick={() => { void handleBookmark(); }} disabled={isTogglingBookmark}>
+            {isBookmarked ? '★ Saved' : '☆ Bookmark'}
+          </Button>
+        ) : null}
       />
 
       <div
         style={{
           backgroundColor: 'var(--color-bg-primary)',
           padding: '40px 64px',
+          position: 'relative',
         }}
       >
-        <div style={{ maxWidth: 580, margin: '0 auto' }}>
+        <div style={{ maxWidth: 580, margin: '0 auto', position: 'relative' }}>
           <PostHeader post={post} />
-          <ProseContent html={post.body_html} />
+          <ProseContent ref={proseRef} html={post.body_html} />
+
+          {token && proseRef.current && (
+            <ConversationHighlights
+              postSlug={slug!}
+              token={token}
+              containerRef={proseRef}
+              onSelectConversation={setActiveChatId}
+            />
+          )}
         </div>
       </div>
+
+      {selection && token && !activeSelection && (
+        <AskAiButton
+          selection={selection}
+          onAsk={(sel) => setActiveSelection(sel)}
+        />
+      )}
+
+      {activeSelection && token && (
+        <ExplanationModal
+          selection={activeSelection}
+          postSlug={slug!}
+          token={token}
+          onClose={() => setActiveSelection(null)}
+          onOpenChat={(id) => { setActiveSelection(null); setActiveChatId(id); }}
+        />
+      )}
+
+      {activeChatId && token && (
+        <ChatPanel
+          conversationId={activeChatId}
+          token={token}
+          onClose={() => setActiveChatId(null)}
+        />
+      )}
 
       <ReactionBar />
       <CommentsSection postSlug={slug!} token={token} />
