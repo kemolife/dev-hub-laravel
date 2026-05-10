@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\Api\V1\AiConversationController;
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\BillingController;
 use App\Http\Controllers\Api\V1\BookmarkController;
@@ -77,6 +78,13 @@ Route::middleware(['auth:sanctum', UpdateLastSeenAt::class])->group(function ():
         Route::post('/posts/{post:slug}/reactions', [ReactionController::class, 'toggle']);
 
         Route::post('/reports/{type}/{id}', [ReportController::class, 'store'])->middleware('throttle:5,60');
+
+        // AI Conversations
+        Route::get('/posts/{post:slug}/conversations', [AiConversationController::class, 'index'])->middleware('throttle:60,1');
+        Route::post('/posts/{post:slug}/conversations', [AiConversationController::class, 'store'])->middleware('throttle:20,1');
+        Route::get('/conversations/{conversation:public_id}', [AiConversationController::class, 'show']);
+        Route::post('/conversations/{conversation:public_id}/messages', [AiConversationController::class, 'addMessage'])->middleware('throttle:20,1');
+        Route::patch('/conversations/{conversation:public_id}', [AiConversationController::class, 'togglePrivacy']);
     });
 
     Route::get('/feed', FeedController::class);
