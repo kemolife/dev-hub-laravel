@@ -21,9 +21,7 @@ class AiConversationResource extends JsonResource
             'selection_end' => $this->resource->selection_end,
             'is_private' => $this->resource->is_private,
             'owner_id' => $this->resource->user_id,
-            'messages' => AiMessageResource::collection(
-                $this->whenLoaded('messages', $this->resource->messages)
-            ),
+            'messages' => AiMessageResource::collection($this->whenLoaded('messages')),
             'created_at' => $this->resource->created_at,
         ];
     }
