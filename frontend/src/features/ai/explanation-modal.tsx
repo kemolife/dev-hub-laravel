@@ -52,6 +52,20 @@ export function ExplanationModal({ selection, postSlug, token, onClose, onOpenCh
   }, [selection, postSlug, token]);
 
   return (
+    <>
+    {/* Yellow marker over the selected text so user sees what was asked about */}
+    <div
+      style={{
+        position: 'fixed',
+        top: selection.rect.top,
+        left: selection.rect.left,
+        width: selection.rect.width,
+        height: selection.rect.height,
+        backgroundColor: 'rgba(250, 200, 80, 0.45)',
+        pointerEvents: 'none',
+        zIndex: 1999,
+      }}
+    />
     <div
       style={{
         position: 'fixed',
@@ -133,5 +147,6 @@ export function ExplanationModal({ selection, postSlug, token, onClose, onOpenCh
         </div>
       </div>
     </div>
+    </>
   );
 }

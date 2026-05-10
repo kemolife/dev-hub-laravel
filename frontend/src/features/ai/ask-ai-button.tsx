@@ -22,15 +22,18 @@ export function AskAiButton({ selection, onAsk }: AskAiButtonProps) {
         left,
         transform: 'translateX(-50%)',
         zIndex: 1000,
-        padding: '4px 10px',
+        padding: '6px 14px',
         fontSize: 13,
+        fontWeight: 500,
         fontFamily: 'var(--font-sans)',
-        backgroundColor: 'var(--color-bg-inverse)',
-        color: 'var(--color-text-inverse)',
+        backgroundColor: '#1a1a1a',
+        color: '#ffffff',
         border: 'none',
-        borderRadius: 'var(--radius-sm)',
+        borderRadius: '20px',
         cursor: 'pointer',
         whiteSpace: 'nowrap',
+        boxShadow: '0 2px 8px rgba(0,0,0,0.25)',
+        letterSpacing: '0.01em',
       }}
     >
       Ask AI

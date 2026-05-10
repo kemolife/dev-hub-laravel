@@ -156,18 +156,20 @@ export function PostDetailPage() {
           position: 'relative',
         }}
       >
-        <div style={{ maxWidth: 580, margin: '0 auto', position: 'relative' }}>
+        <div style={{ maxWidth: 580, margin: '0 auto' }}>
           <PostHeader post={post} />
-          <ProseContent ref={proseRef} html={post.body_html} />
-
-          {token && (
-            <ConversationHighlights
-              postSlug={slug!}
-              token={token}
-              containerRef={proseRef}
-              onSelectConversation={setActiveChatId}
-            />
-          )}
+          {/* Wrapper is the offset parent for highlight divs — must match containerRef */}
+          <div style={{ position: 'relative' }}>
+            <ProseContent ref={proseRef} html={post.body_html} />
+            {token && (
+              <ConversationHighlights
+                postSlug={slug!}
+                token={token}
+                containerRef={proseRef}
+                onSelectConversation={setActiveChatId}
+              />
+            )}
+          </div>
         </div>
       </div>
 
