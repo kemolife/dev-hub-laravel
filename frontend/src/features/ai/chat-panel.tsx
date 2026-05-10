@@ -79,10 +79,10 @@ export function ChatPanel({ conversationId, token, onClose }: ChatPanelProps) {
     <div
       style={{
         position: 'fixed',
-        top: 0,
+        top: 52,
         right: 0,
         width: 360,
-        height: '100vh',
+        height: 'calc(100vh - 52px)',
         backgroundColor: 'var(--color-bg-primary)',
         borderLeft: '0.5px solid var(--color-border-primary)',
         display: 'flex',
