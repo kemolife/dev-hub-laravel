@@ -1,5 +1,5 @@
 import { useParams, Link } from 'react-router';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Topbar } from '../components/layout/topbar';
 import { fetchConversation, continueConversationStream } from '../features/ai/api';
 import { useAuth } from '../features/auth/auth-context';
@@ -15,6 +15,11 @@ export function ConversationPage() {
   const [streamingContent, setStreamingContent] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [notFound, setNotFound] = useState(false);
+  const isMountedRef = useRef(true);
+
+  useEffect(() => {
+    return () => { isMountedRef.current = false; };
+  }, []);
 
   useEffect(() => {
     if (!id || !token) return;
@@ -39,6 +44,7 @@ export function ConversationPage() {
     try {
       let full = '';
       for await (const chunk of continueConversationStream(id, content, token)) {
+        if (!isMountedRef.current) break;
         if (chunk.type === 'content') {
           full += chunk.content;
           setStreamingContent(full);
@@ -51,9 +57,12 @@ export function ConversationPage() {
           setIsStreaming(false);
         }
       }
+      if (isMountedRef.current) setIsStreaming(false);
     } catch {
-      setError('AI service is unavailable.');
-      setIsStreaming(false);
+      if (isMountedRef.current) {
+        setError('AI service is unavailable.');
+        setIsStreaming(false);
+      }
     }
   }
 

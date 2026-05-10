@@ -28,10 +28,11 @@ export function ConversationHighlights({
         const container = containerRef.current;
         if (!container) return;
 
+        const containerRect = container.getBoundingClientRect();
         const computed: Highlight[] = [];
 
         for (const conv of conversations) {
-          const rect = getRectForOffset(container, conv.selection_start, conv.selection_end);
+          const rect = getRectForOffset(container, containerRect, conv.selection_start, conv.selection_end);
           if (rect) computed.push({ conversation: conv, rect });
         }
 
@@ -49,7 +50,7 @@ export function ConversationHighlights({
           title={conversation.selected_text.slice(0, 80)}
           style={{
             position: 'absolute',
-            top: rect.top + window.scrollY,
+            top: rect.top,
             left: rect.left,
             width: rect.width,
             height: rect.height,
@@ -67,6 +68,7 @@ export function ConversationHighlights({
 
 function getRectForOffset(
   container: HTMLElement,
+  containerRect: DOMRect,
   start: number,
   end: number,
 ): DOMRect | null {
@@ -101,7 +103,14 @@ function getRectForOffset(
     const range = document.createRange();
     range.setStart(startNode, startNodeOffset);
     range.setEnd(endNode, endNodeOffset);
-    return range.getBoundingClientRect();
+    const rangeRect = range.getBoundingClientRect();
+    // Return coords relative to container so position:absolute children are placed correctly.
+    return new DOMRect(
+      rangeRect.left - containerRect.left,
+      rangeRect.top - containerRect.top,
+      rangeRect.width,
+      rangeRect.height,
+    );
   } catch {
     return null;
   }

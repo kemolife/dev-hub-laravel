@@ -16,6 +16,11 @@ export function ChatPanel({ conversationId, token, onClose }: ChatPanelProps) {
   const [streamingContent, setStreamingContent] = useState('');
   const [error, setError] = useState<string | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
+  const isMountedRef = useRef(true);
+
+  useEffect(() => {
+    return () => { isMountedRef.current = false; };
+  }, []);
 
   useEffect(() => {
     fetchConversation(conversationId, token)
@@ -47,6 +52,7 @@ export function ChatPanel({ conversationId, token, onClose }: ChatPanelProps) {
       let full = '';
       const gen = continueConversationStream(conversationId, content, token);
       for await (const chunk of gen) {
+        if (!isMountedRef.current) break;
         if (chunk.type === 'content') {
           full += chunk.content;
           setStreamingContent(full);
@@ -59,9 +65,13 @@ export function ChatPanel({ conversationId, token, onClose }: ChatPanelProps) {
           setIsStreaming(false);
         }
       }
+      // Stream ended without a done event (e.g. server-side error after partial data).
+      if (isMountedRef.current) setIsStreaming(false);
     } catch {
-      setError('AI service is unavailable. Please try again.');
-      setIsStreaming(false);
+      if (isMountedRef.current) {
+        setError('AI service is unavailable. Please try again.');
+        setIsStreaming(false);
+      }
     }
   }
 
@@ -104,7 +114,11 @@ export function ChatPanel({ conversationId, token, onClose }: ChatPanelProps) {
             flex: 1,
           }}
         >
-          "{conversation?.selected_text.slice(0, 60)}…"
+          {conversation
+            ? conversation.selected_text.length > 60
+              ? `"${conversation.selected_text.slice(0, 60)}…"`
+              : `"${conversation.selected_text}"`
+            : ''}
         </p>
         <button
           onClick={onClose}

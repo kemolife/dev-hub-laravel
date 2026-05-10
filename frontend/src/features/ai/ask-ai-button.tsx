@@ -6,7 +6,8 @@ interface AskAiButtonProps {
 }
 
 export function AskAiButton({ selection, onAsk }: AskAiButtonProps) {
-  const top = selection.rect.top + window.scrollY - 40;
+  // Use fixed positioning (viewport-relative) so scrollY doesn't affect placement.
+  const top = selection.rect.top - 40;
   const left = selection.rect.left + selection.rect.width / 2;
 
   return (
@@ -16,7 +17,7 @@ export function AskAiButton({ selection, onAsk }: AskAiButtonProps) {
         onAsk(selection);
       }}
       style={{
-        position: 'absolute',
+        position: 'fixed',
         top,
         left,
         transform: 'translateX(-50%)',
