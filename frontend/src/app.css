@@ -62,6 +62,16 @@ body {
   font-size: 0.9em;
 }
 
+.ai-prose p { margin: 0 0 10px; }
+.ai-prose p:last-child { margin-bottom: 0; }
+.ai-prose h1,.ai-prose h2,.ai-prose h3,.ai-prose h4 { font-weight: 600; margin: 14px 0 6px; font-size: 13px; color: var(--color-text-primary); }
+.ai-prose ul,.ai-prose ol { padding-left: 18px; margin: 6px 0 10px; }
+.ai-prose li { margin-bottom: 4px; }
+.ai-prose strong { font-weight: 600; }
+.ai-prose code { font-family: var(--font-mono); font-size: 0.88em; background: var(--color-bg-tertiary); padding: 1px 4px; border-radius: 3px; }
+.ai-prose pre { background: #1e1e1e; color: #e0e0e0; border-radius: var(--radius-md); padding: 12px 14px; margin: 10px 0; overflow-x: auto; }
+.ai-prose pre code { background: none; padding: 0; font-size: 12px; }
+
 [contenteditable][data-placeholder]:empty::before {
   content: attr(data-placeholder);
   color: var(--color-text-tertiary);

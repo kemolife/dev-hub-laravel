@@ -10,12 +10,15 @@ use App\Listeners\DispatchWebhooksForEvent;
 use App\Listeners\SendNewCommentNotifications;
 use App\Listeners\SyncUserPlanOnSubscriptionChange;
 use App\Listeners\TrackOnboardingProgress;
+use App\Models\AiConversation;
 use App\Models\Comment;
 use App\Models\Post;
 use App\Models\User;
 use App\Observers\PostObserver;
+use App\Policies\AiConversationPolicy;
 use App\Policies\CommentPolicy;
 use App\Policies\PostPolicy;
+use App\Services\OllamaClient;
 use Carbon\CarbonImmutable;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Events\QueryExecuted;
@@ -38,7 +41,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->singleton(OllamaClient::class, fn () => new OllamaClient(
+            baseUrl: (string) config('services.ollama.base_url', 'http://localhost:11434'),
+            model: (string) config('services.ollama.model', 'llama3.2'),
+        ));
     }
 
     /**
@@ -62,6 +68,7 @@ class AppServiceProvider extends ServiceProvider
     {
         Gate::define('admin', fn (User $user): bool => $user->isAdmin());
         Gate::define('moderator', fn (User $user): bool => $user->isModerator());
+        Gate::policy(AiConversation::class, AiConversationPolicy::class);
         Gate::policy(Post::class, PostPolicy::class);
         Gate::policy(Comment::class, CommentPolicy::class);
     }
