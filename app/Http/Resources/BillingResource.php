@@ -39,8 +39,11 @@ class BillingResource extends JsonResource
 
         return [
             'plan' => $plan,
-            'status' => $subscription?->stripe_status,
+            'plan_name' => config("plans.{$plan}.name", ucfirst($plan)),
+            'subscription_status' => $subscription?->stripe_status,
+            'subscribed' => $subscription !== null && $subscription->active(),
             'trial_ends_at' => $user->trial_ends_at?->toIso8601String(),
+            'on_trial' => $user->trial_ends_at !== null && $user->trial_ends_at->isFuture(),
             'renews_at' => $subscription?->asStripeSubscription()->current_period_end
                 ? date('c', $subscription->asStripeSubscription()->current_period_end)
                 : null,

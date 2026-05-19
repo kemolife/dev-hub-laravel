@@ -65,6 +65,7 @@ class BillingTest extends TestCase
     {
         $response = $this->postJson('/api/v1/register', [
             'name' => 'Trial User',
+            'username' => 'trialuser',
             'email' => 'trialuser@example.com',
             'password' => 'password',
             'password_confirmation' => 'password',
