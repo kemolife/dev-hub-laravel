@@ -9,14 +9,14 @@ use App\Models\AiConversation;
 use App\Models\User;
 use App\Services\OllamaClient;
 use Generator;
-use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Mockery\MockInterface;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class ContinueConversationTest extends TestCase
 {
-    use LazilyRefreshDatabase;
+    use RefreshDatabase;
 
     #[Test]
     public function owner_can_add_message_and_gets_streamed_reply(): void

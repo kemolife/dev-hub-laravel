@@ -9,14 +9,14 @@ use App\Models\Post;
 use App\Models\User;
 use App\Services\OllamaClient;
 use Generator;
-use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Mockery\MockInterface;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class StartConversationTest extends TestCase
 {
-    use LazilyRefreshDatabase;
+    use RefreshDatabase;
 
     private function mockOllama(array $chunks = ['Hello ', 'world']): void
     {
