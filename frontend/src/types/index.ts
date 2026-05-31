@@ -84,7 +84,10 @@ export interface ApiComment {
 
 export interface BillingStatus {
   plan: 'free' | 'pro' | 'pro_annual';
-  status: 'active' | 'cancelled' | 'on_grace_period' | 'trialing' | null;
+  plan_name: string;
+  subscription_status: 'active' | 'cancelled' | 'on_grace_period' | 'trialing' | null;
+  subscribed: boolean;
+  on_trial: boolean;
   trial_ends_at: string | null;
   renews_at: string | null;
   cancelled_at: string | null;

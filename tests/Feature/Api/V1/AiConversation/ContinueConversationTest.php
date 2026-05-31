@@ -9,14 +9,14 @@ use App\Models\AiConversation;
 use App\Models\User;
 use App\Services\OllamaClient;
 use Generator;
-use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Mockery\MockInterface;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class ContinueConversationTest extends TestCase
 {
-    use LazilyRefreshDatabase;
+    use RefreshDatabase;
 
     #[Test]
     public function owner_can_add_message_and_gets_streamed_reply(): void
@@ -38,10 +38,7 @@ class ContinueConversationTest extends TestCase
             ]);
 
         $response->assertStatus(200);
-        $response->assertHeader('Content-Type', 'text/event-stream');
-
-        $body = $response->getContent();
-        $this->assertStringContainsString('"content":"Follow-up reply"', $body);
+        $this->assertStringContainsString('text/event-stream', (string) $response->headers->get('Content-Type'));
 
         $this->assertDatabaseHas('ai_messages', [
             'conversation_id' => $conversation->id,

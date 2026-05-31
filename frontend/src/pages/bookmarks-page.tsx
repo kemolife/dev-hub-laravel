@@ -49,6 +49,7 @@ export function BookmarksPage() {
               DevHub
             </Link>
           }
+          right={null}
         />
 
         <div className="p-6" style={{ maxWidth: 680, margin: '0 auto' }}>
