@@ -14,9 +14,11 @@ class AiMessageResource extends JsonResource
     /** @return array<string, mixed> */
     public function toArray(Request $request): array
     {
+        $role = $this->resource->role;
+
         return [
             'id' => $this->resource->id,
-            'role' => $this->resource->role->value,
+            'role' => is_string($role) ? $role : $role->value,
             'content' => $this->resource->content,
             'created_at' => $this->resource->created_at,
         ];

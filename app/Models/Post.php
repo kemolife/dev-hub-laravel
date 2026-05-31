@@ -27,6 +27,7 @@ use Laravel\Scout\Searchable;
  * @property PostStatus $status
  * @property int $reading_time_seconds
  * @property Carbon|CarbonImmutable|null $published_at
+ * @property bool $is_bookmarked
  */
 #[Fillable([
     'user_id',

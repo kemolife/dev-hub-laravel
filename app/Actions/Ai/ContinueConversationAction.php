@@ -22,7 +22,7 @@ class ContinueConversationAction
             ->orderBy('created_at')
             ->get()
             ->map(fn (AiMessage $message): array => [
-                'role' => $message->role->value,
+                'role' => $message->role instanceof MessageRole ? $message->role->value : (string) $message->role,
                 'content' => $message->content,
             ])
             ->toArray();
