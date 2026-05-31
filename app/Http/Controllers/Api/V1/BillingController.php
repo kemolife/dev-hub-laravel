@@ -11,8 +11,8 @@ use App\Http\Resources\BillingResource;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Laravel\Cashier\Invoice;
+use Symfony\Component\HttpFoundation\Response;
 
 class BillingController extends Controller
 {
@@ -64,10 +64,9 @@ class BillingController extends Controller
         $user = $request->user();
 
         try {
-            /** @var Invoice[] $invoices */
             $invoices = $user->invoices();
 
-            $data = $invoices->map(function (Invoice $invoice): array {
+            $data = collect($invoices)->map(function (Invoice $invoice): array {
                 $stripeInvoice = $invoice->asStripeInvoice();
 
                 return [

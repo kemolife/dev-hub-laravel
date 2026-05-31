@@ -37,6 +37,12 @@ class BillingResource extends JsonResource
 
         $plan = $this->resolvePlanFromSubscription($subscription?->stripe_price);
 
+        $stripeSubscription = $subscription?->asStripeSubscription();
+        $renewsAt = null;
+        if ($stripeSubscription && isset($stripeSubscription->current_period_end)) {
+            $renewsAt = date('c', $stripeSubscription->current_period_end);
+        }
+
         return [
             'plan' => $plan,
             'plan_name' => config("plans.{$plan}.name", ucfirst($plan)),
@@ -44,9 +50,7 @@ class BillingResource extends JsonResource
             'subscribed' => $subscription !== null && $subscription->active(),
             'trial_ends_at' => $user->trial_ends_at?->toIso8601String(),
             'on_trial' => $user->trial_ends_at !== null && $user->trial_ends_at->isFuture(),
-            'renews_at' => $subscription?->asStripeSubscription()->current_period_end
-                ? date('c', $subscription->asStripeSubscription()->current_period_end)
-                : null,
+            'renews_at' => $renewsAt,
             'cancelled_at' => $subscription?->ends_at?->toIso8601String(),
             'ends_at' => $subscription?->ends_at?->toIso8601String(),
             'limits' => [

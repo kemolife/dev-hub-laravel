@@ -2,43 +2,27 @@ name: CI
 
 on:
   push:
-    branches: [main, master]
+    branches: [main, master, develop]
   pull_request:
-    branches: [main, master]
+    branches: [main, master, develop]
 
 jobs:
-  backend:
-    name: PHP ${{ matrix.php }}
+  lint:
+    name: Lint & Format
     runs-on: ubuntu-latest
-
-    services:
-      postgres:
-        image: postgres:17
-        env:
-          POSTGRES_DB: devhub_test
-          POSTGRES_USER: devhub
-          POSTGRES_PASSWORD: devhub
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
-    strategy:
-      matrix:
-        php: ["8.4"]
-
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up PHP
+      - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: ${{ matrix.php }}
-          extensions: pdo, pdo_pgsql, redis, bcmath, intl
-          coverage: none
+          php-version: '8.4'
+          tools: composer:v2
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
 
       - name: Cache Composer packages
         uses: actions/cache@v4
@@ -47,16 +31,92 @@ jobs:
           key: ${{ runner.os }}-composer-${{ hashFiles('composer.lock') }}
           restore-keys: ${{ runner.os }}-composer-
 
-      - name: Install dependencies
+      - name: Cache npm packages
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json') }}
+          restore-keys: ${{ runner.os }}-npm-
+
+      - name: Install PHP dependencies
         run: composer install --prefer-dist --no-interaction --no-progress
 
-      - name: Copy .env
-        run: cp .env.example .env
+      - name: Install Node dependencies
+        run: npm ci
 
-      - name: Configure test environment
+      - name: Lint with Pint
+        run: vendor/bin/pint --test
+
+      - name: Lint frontend
+        run: npm run lint
+
+      - name: Format check frontend
+        run: npm run format
+
+  test:
+    name: Tests (PHP ${{ matrix.php }})
+    runs-on: ubuntu-latest
+    needs: lint
+
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_DB: devhub_test
+          POSTGRES_USER: devhub
+          POSTGRES_PASSWORD: devhub
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    strategy:
+      matrix:
+        php: ['8.4']
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: pdo, pdo_pgsql, redis, bcmath, intl
+          tools: composer:v2
+          coverage: none
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Cache Composer packages
+        uses: actions/cache@v4
+        with:
+          path: vendor
+          key: ${{ runner.os }}-composer-${{ hashFiles('composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      - name: Cache npm packages
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json') }}
+          restore-keys: ${{ runner.os }}-npm-
+
+      - name: Install PHP dependencies
+        run: composer install --prefer-dist --no-interaction --no-progress
+
+      - name: Install Node dependencies
+        run: npm ci
+
+      - name: Setup environment
         run: |
-          echo "APP_KEY=" >> .env
-          php artisan key:generate --force
+          cp .env.example .env
+          php artisan key:generate
           echo "DB_CONNECTION=pgsql" >> .env
           echo "DB_HOST=127.0.0.1" >> .env
           echo "DB_PORT=5432" >> .env
@@ -68,14 +128,14 @@ jobs:
           echo "SESSION_DRIVER=array" >> .env
           echo "MAIL_MAILER=array" >> .env
 
+      - name: Build frontend
+        run: npm run build
+
       - name: Run migrations
         run: php artisan migrate --force
-
-      - name: Lint (Pint)
-        run: vendor/bin/pint --parallel --test
 
       - name: Static analysis (Larastan)
         run: vendor/bin/phpstan analyse --memory-limit=512M --no-progress
 
-      - name: Tests (PHPUnit)
+      - name: Run tests
         run: php artisan test --compact
