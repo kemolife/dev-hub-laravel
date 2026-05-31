@@ -38,7 +38,7 @@ class ContinueConversationTest extends TestCase
             ]);
 
         $response->assertStatus(200);
-        $response->assertHeader('Content-Type', 'text/event-stream');
+        $this->assertStringContainsString('text/event-stream', $response->headers->get('Content-Type'));
 
         $body = $response->getContent();
         $this->assertStringContainsString('"content":"Follow-up reply"', $body);

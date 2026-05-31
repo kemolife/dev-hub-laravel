@@ -99,7 +99,7 @@ jobs:
           echo "DB_CONNECTION=pgsql" >> .env
           echo "DB_HOST=127.0.0.1" >> .env
           echo "DB_PORT=5432" >> .env
-          echo "DB_DATABASE=devhub_test" >> .env
+          echo "DB_DATABASE=testing" >> .env
           echo "DB_USERNAME=devhub" >> .env
           echo "DB_PASSWORD=devhub" >> .env
           echo "QUEUE_CONNECTION=sync" >> .env
